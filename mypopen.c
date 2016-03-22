@@ -1,19 +1,20 @@
 #include <stdio.h>
+#include <stdlib.h>
 
 int main(int argc, char **argv)
 {
     FILE *fp;
-    
-    CheckArguments(argc, argv);
-    
-    if ((fp = popen("ls -rt", "r")) != NULL))
-    {
-        ProcessOutput(fp);
-        
-        (void) pclose(fp);
-        
+    extern FILE *popen();
+    char buff[512];
+ 
+    if(!(fp = popen("ls -sail", "r"))){
+        exit(1);
     }
-  
-    exit(EXIT_SUCCESS);
+
+    while(fgets(buff, sizeof(buff), fp)!=NULL){
+        printf("%s", buff);
+    }
+    pclose(fp);
+
     
 }
