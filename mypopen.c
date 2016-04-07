@@ -18,26 +18,24 @@ FILE *mypopen(const char *command, const char *type)
 	// fork() return  the process id (PID) of the childprocess
 	childpid = fork()
 	
-	// Link STDIN, STDOUT with pipe fd[0], fd[1]
-	if (*type == "r" || *type == "R")
-	{
-		// read command
-		if (dup2(fd[READ_END], STDOUT_FILENO) == -1) {
-			// Handle dup2() error 
-	    	}
-	} 
-	else 
-	{
-		// write command
-		if (dup2(fd[WRITE_END], STDIN_FILENO) == -1) {
-			// Handle dup2() error 
-	    	}
-	}
-	
 	if(childpid == 0)
 	{
 		// Child process
-		
+		// Link STDIN, STDOUT with pipe fd[0], fd[1]
+		if (*type == "r" || *type == "R")
+		{
+			// read command
+			if (dup2(fd[READ_END], STDOUT_FILENO) == -1) {
+				// Handle dup2() error 
+		    	}
+		} 
+		else 
+		{
+			// write command
+			if (dup2(fd[WRITE_END], STDIN_FILENO) == -1) {
+				// Handle dup2() error 
+		    	}
+		}
 	} 
 	else 
 	{
