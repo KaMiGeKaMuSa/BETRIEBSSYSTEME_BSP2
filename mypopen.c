@@ -18,42 +18,34 @@ FILE *mypopen(const char *command, const char *type)
 	// fork() return  the process id (PID) of the childprocess
 	childpid = fork()
 	
+	// Link STDIN, STDOUT with pipe fd[0], fd[1]
 	if (*type == "r" || *type == "R")
 	{
 		// read command
-		if(childpid == 0)
-		{
-				// Child process
-				// closes read side of pipe, because child need to write 
-				close(fd[READ_END]);
-		} 
-		else 
-		{
-				// Parent process
-				// close write side of pipe, because parent need to read
-				if (dup2(fd[WRITE_END], STDOUT_FILENO) == -1) {
-				   // Handle dup2() error 
-			    }
-				close(fd[WRITE_END]);
-		}
-		
+		if (dup2(fd[READ_END], STDOUT_FILENO) == -1) {
+			// Handle dup2() error 
+	    	}
 	} 
-	else if (*type == "w" || *type == "W")
+	else 
 	{
 		// write command
-		if(childpid == 0)
-		{
-				// Child process
-				// close write side of pipe, because child need to read
-				close(fd[WRITE_END]);
-		} 
-		else
-		{
-				// Parent process 
-				// close write side of pipe, because parent need to write
-				close(fd[READ_END]);
-		}
+		if (dup2(fd[WRITE_END], STDIN_FILENO) == -1) {
+			// Handle dup2() error 
+	    	}
 	}
+	
+	if(childpid == 0)
+	{
+		// Child process
+		
+	} 
+	else 
+	{
+		// Parent process
+	}
+	
+	close(fd[WRITE_END]);
+	close(fd[READ_END]);
 	
 	return popen(command, type);
 }
