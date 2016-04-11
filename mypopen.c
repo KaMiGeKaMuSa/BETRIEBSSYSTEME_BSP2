@@ -107,3 +107,12 @@ int mypclose(FILE *stream)
 {
 	return pclose(stream);
 }
+// WENN FEHLER DANN VORHER AUFRÄUMEN: pipe schließen etc
+// execl("/bin/sh", "sh", "-c", command, NULL);
+
+// mypclose()
+// waitpid(); 
+// Pipe wird geschlossen wenn letzter filedeskriptor geschlossen wird
+// fclose von Filepointer (fclose schließt den darunter liegeneden filedeskriptor fd)
+//  
+
