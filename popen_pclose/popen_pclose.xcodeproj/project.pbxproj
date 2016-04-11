@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		A321A6C91CA3FAE7009704FF /* mypopen.c in Sources */ = {isa = PBXBuildFile; fileRef = A321A6C81CA3FAE7009704FF /* mypopen.c */; };
+		A32D6FC71CBC0A0F0064D1AA /* libpopentest.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A32D6FC61CBC0A0F0064D1AA /* libpopentest.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -25,6 +26,7 @@
 /* Begin PBXFileReference section */
 		A321A6BE1CA3FAB4009704FF /* popen_pclose */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = popen_pclose; sourceTree = BUILT_PRODUCTS_DIR; };
 		A321A6C81CA3FAE7009704FF /* mypopen.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = mypopen.c; path = ../../mypopen.c; sourceTree = "<group>"; };
+		A32D6FC61CBC0A0F0064D1AA /* libpopentest.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libpopentest.a; path = /Users/gerhard/Documents/FH/2.Semester/BETRIEBSSYSTEME/BETRIEBSSYSTEME_BSP2/popen_pclose/../libpopentest.a; sourceTree = "<absolute>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -32,6 +34,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A32D6FC71CBC0A0F0064D1AA /* libpopentest.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -57,6 +60,7 @@
 		A321A6C01CA3FAB4009704FF /* popen_pclose */ = {
 			isa = PBXGroup;
 			children = (
+				A32D6FC61CBC0A0F0064D1AA /* libpopentest.a */,
 				A321A6C81CA3FAE7009704FF /* mypopen.c */,
 			);
 			path = popen_pclose;
@@ -237,6 +241,7 @@
 				A321A6C71CA3FAB4009704FF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

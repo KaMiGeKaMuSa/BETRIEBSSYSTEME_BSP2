@@ -11,7 +11,7 @@ FILE *mypopen(const char *command, const char *type)
 	int     fd[2];
 	pid_t   childpid;
 	
-	if (strcmp(*type, "r") != 0 && strcmp(*type, "R") != 0 && strcmp(*type, "w") != 0 && strcmp(*type, "W") != 0)
+	if (strcmp(type, "r") != 0 && strcmp(type, "R") != 0 && strcmp(type, "w") != 0 && strcmp(type, "W") != 0)
 	{
 		// no valid type
 		return NULL;
@@ -35,7 +35,7 @@ FILE *mypopen(const char *command, const char *type)
 	if(childpid == (pid_t) 0)
 	{
 		// read command
-		if (strcmp(*type, "r") == 0 || strcmp(*type, "R") == 0)
+		if (strcmp(type, "r") == 0 || strcmp(type, "R") == 0)
 		{
 			// close unused pipe end
 			close (fd[READ_END]);
@@ -67,7 +67,7 @@ FILE *mypopen(const char *command, const char *type)
 	else if (childpid > (pid_t) 0)
 	{
 		// read command
-		if (strcmp(*type, "r") == 0 || strcmp(*type, "R") == 0)
+		if (strcmp(type, "r") == 0 || strcmp(type, "R") == 0)
 		{
 			// close unused pipe end
 			close (fd[WRITE_END]);
