@@ -10,7 +10,7 @@ FILE *mypopen(const char *command, const char *type)
 	int     fd[2];
 	pid_t   childpid;
 	
-	if (*type == "r" && *type != "R" && *type == "w" && *type != "W")
+	if (*type == "r" && *type != "R" && *type != "w" && *type != "W")
 	{
 		// no valid type
 		return NULL;
@@ -28,7 +28,7 @@ FILE *mypopen(const char *command, const char *type)
 	// if fork() is successful it return twice: 
 	// 		- in parent process the return value is the process id (PID) of the childprocess
 	//		- in child process the return value is 0
-	childpid = fork()
+    childpid = fork();
 	
 	// Child process
 	if(childpid == (pid_t) 0)
@@ -37,7 +37,7 @@ FILE *mypopen(const char *command, const char *type)
 		if (*type == "r" || *type == "R")
 		{
 			// close unused pipe end
-			close (mypipe[READ_END]);
+			close (fd[READ_END]);
 			
 			// Link STDOUT with pipe fd
 			if (dup2(fd[WRITE_END], STDOUT_FILENO) == -1) {
@@ -51,7 +51,7 @@ FILE *mypopen(const char *command, const char *type)
 		else 
 		{
 			// close unused pipe end
-			close (mypipe[WRITE_END]);
+			close (fd[WRITE_END]);
 			
 			// Link STDIN with pipe fd
 			if (dup2(fd[READ_END], STDIN_FILENO) == -1) {
@@ -69,7 +69,7 @@ FILE *mypopen(const char *command, const char *type)
 		if (*type == "r" || *type == "R")
 		{
 			// close unused pipe end
-			close (mypipe[WRITE_END]);
+			close (fd[WRITE_END]);
 			
 			// Link STDIN with pipe fd
 			if (dup2(fd[READ_END], STDIN_FILENO) == -1) {
@@ -83,7 +83,7 @@ FILE *mypopen(const char *command, const char *type)
 		else 
 		{
 			// close unused pipe end
-			close (mypipe[READ_END]);
+			close (fd[READ_END]);
 			
 			// Link STDOUT with pipe fd
 			if (dup2(fd[WRITE_END], STDOUT_FILENO) == -1) {
@@ -94,8 +94,7 @@ FILE *mypopen(const char *command, const char *type)
 			// write into pipe .... (exec)
 		}
 	}
-	else
-	{
+	else {
 		// fork failed: according to documentation NULL should be returned
 		return NULL;
 	}
