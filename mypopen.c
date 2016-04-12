@@ -8,8 +8,9 @@
 // BSP: http://stackoverflow.com/questions/9255425/writing-to-a-pipe-with-a-child-and-parent-process    
 FILE *mypopen(const char *command, const char *type)
 {
-	int     fd[2];
-	pid_t   childpid;
+	int fd[2];
+	pid_t childpid;
+	FILE* fp;
 	
 	if (strcmp(type, "r") != 0 && strcmp(type, "R") != 0 && strcmp(type, "w") != 0 && strcmp(type, "W") != 0)
 	{
@@ -45,8 +46,6 @@ FILE *mypopen(const char *command, const char *type)
 				// dup2 failed 
 				return NULL;
 			}
-			
-			// read from pipe .....
 		}
 		// write command		
 		else 
@@ -59,9 +58,13 @@ FILE *mypopen(const char *command, const char *type)
 				// dup2 failed 
 				return NULL;
 			}
-			
-			// write into pipe ...... (exec)
 		}
+		
+		// Execute the command in a shell:
+		execl("/bin/sh", "sh", "-c", command, NULL);
+		
+		// This code only get executed if execl fails. This code is used to "kill" the child process:
+		exit(EXIT_FAILURE);
 	}
 	// Parent process
 	else if (childpid > (pid_t) 0)
@@ -77,8 +80,6 @@ FILE *mypopen(const char *command, const char *type)
 				// dup2 failed 
 				return NULL;
 			}
-			
-			// read from pipe ..... (wait until child die)
 		}
 		// write command		
 		else 
@@ -91,16 +92,15 @@ FILE *mypopen(const char *command, const char *type)
 				// dup2 failed 
 				return NULL;
 			}
-			
-			// write into pipe .... (exec)
 		}
 	}
 	else {
 		// fork failed: according to documentation NULL should be returned
 		return NULL;
 	}
+	fp = fdopen(fd, type);
 	
-	return popen(command, type);
+	return fp;
 }
 	  
 int mypclose(FILE *stream)
@@ -114,5 +114,3 @@ int mypclose(FILE *stream)
 // waitpid(); 
 // Pipe wird geschlossen wenn letzter filedeskriptor geschlossen wird
 // fclose von Filepointer (fclose schließt den darunter liegeneden filedeskriptor fd)
-//  
-
