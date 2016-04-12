@@ -1,22 +1,24 @@
-#include <stdio.h>
-#include <unistd.h>
-#include <sys/types.h>
-#include <string.h>
-#include <errno.h>
+#include "mypopen.h"
 
-#define READ_END 0
-#define WRITE_END 1
+static FILE* fp = NULL;
+
 // BSP: http://stackoverflow.com/questions/9255425/writing-to-a-pipe-with-a-child-and-parent-process    
 FILE *mypopen(const char *command, const char *type)
 {
 	int fd[2];
 	pid_t childpid;
-	FILE* fp;
 	
-	if (strcmp(type, "r") != 0 && strcmp(type, "R") != 0 && strcmp(type, "w") != 0 && strcmp(type, "W") != 0)
+	if (fp != NULL)
+	{
+		errno = EAGAIN;
+		return NULL;
+	}
+	
+	if (*type != 'r' || *type != 'w' || command == NULL)
 	{
 		// no valid type
-		return EINVAL;
+		errno = EINVAL;
+		return NULL;
 	}
 	
 	// Open new pipe 
@@ -37,7 +39,7 @@ FILE *mypopen(const char *command, const char *type)
 	if(childpid == (pid_t) 0)
 	{
 		// read command
-		if (strcmp(type, "r") == 0 || strcmp(type, "R") == 0)
+		if (*type == 'r')
 		{
 			// close unused pipe end
 			close (fd[READ_END]);
@@ -46,7 +48,7 @@ FILE *mypopen(const char *command, const char *type)
 			if (dup2(fd[WRITE_END], STDOUT_FILENO) == -1) {
 				// dup2 failed: close pipe and end child process (NO RETURN, because then child and parent would send return value to main) 
 				close (fd[WRITE_END]);
-				exit(EXIT_FAILURE);
+				_exit(EXIT_FAILURE);
 			}
 		}
 		// write command		
@@ -59,7 +61,7 @@ FILE *mypopen(const char *command, const char *type)
 			if (dup2(fd[READ_END], STDIN_FILENO) == -1) {
 				// dup2 failed: close pipe and end child process (NO RETURN, because then child and parent would send return value to main) 
 				close (fd[READ_END]);
-				exit(EXIT_FAILURE);
+				_exit(EXIT_FAILURE);
 			}
 		}
 		
@@ -67,13 +69,13 @@ FILE *mypopen(const char *command, const char *type)
 		execl("/bin/sh", "sh", "-c", command, NULL);
 		
 		// This code only get executed if execl fails. This code is used to "kill" the child process:
-		exit(EXIT_FAILURE);
+		_exit(EXIT_FAILURE);
 	}
 	// Parent process
 	else if (childpid > (pid_t) 0)
 	{
 		// read command
-		if (strcmp(type, "r") == 0 || strcmp(type, "R") == 0)
+		if (*type == 'r')
 		{
 			// close unused pipe end
 			close (fd[WRITE_END]);
@@ -84,6 +86,8 @@ FILE *mypopen(const char *command, const char *type)
 				close (fd[READ_END]);
 				return NULL;
 			}
+			
+			fp = fdopen(fd[READ_END], type);
 		}
 		// write command		
 		else 
@@ -97,6 +101,8 @@ FILE *mypopen(const char *command, const char *type)
 				close (fd[WRITE_END]);
 				return NULL;
 			}
+			
+			fp = fdopen(fd[WRITE_END], type);
 		}
 	}
 	else {
@@ -105,7 +111,6 @@ FILE *mypopen(const char *command, const char *type)
 		close (fd[WRITE_END]);
 		return NULL;
 	}
-	fp = fdopen(fd, type);
 	
 	return fp;
 }
