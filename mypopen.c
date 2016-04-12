@@ -2,6 +2,7 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <string.h>
+#include <errno.h>
 
 #define READ_END 0
 #define WRITE_END 1
@@ -15,7 +16,7 @@ FILE *mypopen(const char *command, const char *type)
 	if (strcmp(type, "r") != 0 && strcmp(type, "R") != 0 && strcmp(type, "w") != 0 && strcmp(type, "W") != 0)
 	{
 		// no valid type
-		return NULL;
+		return EINVAL;
 	}
 	
 	// Open new pipe 
