@@ -44,8 +44,9 @@ FILE *mypopen(const char *command, const char *type)
 			
 			// Link STDOUT with pipe fd
 			if (dup2(fd[WRITE_END], STDOUT_FILENO) == -1) {
-				// dup2 failed 
-				return NULL;
+				// dup2 failed: close pipe and end child process (NO RETURN, because then child and parent would send return value to main) 
+				close (fd[WRITE_END]);
+				exit(EXIT_FAILURE);
 			}
 		}
 		// write command		
@@ -56,8 +57,9 @@ FILE *mypopen(const char *command, const char *type)
 			
 			// Link STDIN with pipe fd
 			if (dup2(fd[READ_END], STDIN_FILENO) == -1) {
-				// dup2 failed 
-				return NULL;
+				// dup2 failed: close pipe and end child process (NO RETURN, because then child and parent would send return value to main) 
+				close (fd[READ_END]);
+				exit(EXIT_FAILURE);
 			}
 		}
 		
@@ -79,6 +81,7 @@ FILE *mypopen(const char *command, const char *type)
 			// Link STDIN with pipe fd
 			if (dup2(fd[READ_END], STDIN_FILENO) == -1) {
 				// dup2 failed 
+				close (fd[READ_END]);
 				return NULL;
 			}
 		}
@@ -91,12 +94,15 @@ FILE *mypopen(const char *command, const char *type)
 			// Link STDOUT with pipe fd
 			if (dup2(fd[WRITE_END], STDOUT_FILENO) == -1) {
 				// dup2 failed 
+				close (fd[WRITE_END]);
 				return NULL;
 			}
 		}
 	}
 	else {
-		// fork failed: according to documentation NULL should be returned
+		// fork failed: according to documentation NULL should be returned, but before close pipe:
+		close (fd[READ_END]);
+		close (fd[WRITE_END]);
 		return NULL;
 	}
 	fp = fdopen(fd, type);
@@ -111,7 +117,7 @@ int mypclose(FILE *stream)
 // WENN FEHLER DANN VORHER AUFRÄUMEN: pipe schließen etc
 // execl("/bin/sh", "sh", "-c", command, NULL);
 
-// mypclose()
+// mypclose():
 // waitpid(); 
 // Pipe wird geschlossen wenn letzter filedeskriptor geschlossen wird
 // fclose von Filepointer (fclose schließt den darunter liegeneden filedeskriptor fd)
