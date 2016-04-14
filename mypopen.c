@@ -108,7 +108,7 @@ static FILE * parentAction(int fd[2], int unused_end, int used_end, const char *
 	if ((fp_temp = fdopen(fd[used_end], type)) == NULL) 
 	{
 		// fdopen failed: close pipe and return null
-		close(pipe_ends[used_end]);
+		close(fd[used_end]);
 		return NULL;
 	}
 	
