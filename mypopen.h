@@ -6,6 +6,7 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <errno.h>
+#include <string.h>
 
 #define READ_END 0
 #define WRITE_END 1
