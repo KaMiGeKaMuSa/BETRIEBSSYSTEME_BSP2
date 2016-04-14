@@ -40,72 +40,23 @@ FILE *mypopen(const char *command, const char *type)
 	{
 		// read command
 		if (strcmp(type, "r"))
-		{
-			// close unused pipe end
-			close (fd[READ_END]);
-			
-			// Link STDOUT with pipe fd
-			if (dup2(fd[WRITE_END], STDOUT_FILENO) == -1) {
-				// dup2 failed: close pipe and end child process (NO RETURN, because then child and parent would send return value to main) 
-				close (fd[WRITE_END]);
-				_exit(EXIT_FAILURE);
-			}
-		}
+			childAction(fd, READ_END, WRITE_END, command);
 		// write command		
 		else 
-		{
-			// close unused pipe end
-			close (fd[WRITE_END]);
-			
-			// Link STDIN with pipe fd
-			if (dup2(fd[READ_END], STDIN_FILENO) == -1) {
-				// dup2 failed: close pipe and end child process (NO RETURN, because then child and parent would send return value to main) 
-				close (fd[READ_END]);
-				_exit(EXIT_FAILURE);
-			}
-		}
-		
-		// Execute the command in a shell:
-		execl("/bin/sh", "sh", "-c", command, NULL);
-		
-		// This code only get executed if execl fails. This code is used to "kill" the child process:
-		_exit(EXIT_FAILURE);
+			childAction(fd, WRITE_END, READ_END, command);
 	}
 	// Parent process
 	else if (childpid > (pid_t) 0)
 	{
 		// read command
 		if (strcmp(type, "r"))
-		{
-			// close unused pipe end
-			close (fd[WRITE_END]);
-			
-			// Link STDIN with pipe fd
-			if (dup2(fd[READ_END], STDIN_FILENO) == -1) {
-				// dup2 failed 
-				close (fd[READ_END]);
-				return NULL;
-			}
-			
-			fp = fdopen(fd[READ_END], type);
-		}
+			fp = parentAction(fd, WRITE_END, READ_END, type);
 		// write command		
 		else 
-		{
-			// close unused pipe end
-			close (fd[READ_END]);
-			
-			// Link STDOUT with pipe fd
-			if (dup2(fd[WRITE_END], STDOUT_FILENO) == -1) {
-				// dup2 failed 
-				close (fd[WRITE_END]);
-				return NULL;
-			}
-			
-			fp = fdopen(fd[WRITE_END], type);
-		}
+			fp = parentAction(fd, READ_END, WRITE_END, type);
 	}
-	else {
+	else 
+	{
 		// fork failed: according to documentation NULL should be returned, but before close pipe:
 		close (fd[READ_END]);
 		close (fd[WRITE_END]);
@@ -119,6 +70,51 @@ int mypclose(FILE *stream)
 {
 	return pclose(stream);
 }
+
+static void childAction(int fd[2], int unused_end, int used_end, const char *command)
+{
+	// close unused pipe end
+	close (fd[unused_end]);
+	
+	// Link STDOUT with pipe fd
+	if (dup2(fd[used_end], STDOUT_FILENO) == -1) {
+		// dup2 failed: close pipe and end child process (NO RETURN, because then child and parent would send return value to main) 
+		close (fd[used_end]);
+		_exit(EXIT_FAILURE);
+	}
+	
+	// Execute the command in a shell:
+	execl("/bin/sh", "sh", "-c", command, NULL);
+	
+	// This code only get executed if execl fails. This code is used to "kill" the child process:
+	_exit(EXIT_FAILURE);
+}
+
+static FILE * parentAction(int fd[2], int unused_end, int used_end, const char *type)
+{
+	FILE* fp_temp = NULL; 
+	
+	// close unused pipe end
+	close (fd[unused_end]);
+	
+	// Link STDIN with pipe fd
+	if (dup2(fd[used_end], STDIN_FILENO) == -1) {
+		// dup2 failed 
+		close (fd[used_end]);
+		return NULL;
+	}
+	
+	// Convert file descriptor into file pointer
+	if ((fp_temp = fdopen(fd[used_end], type)) == NULL) 
+	{
+		// fdopen failed: close pipe and return null
+		close(pipe_ends[used_end]);
+		return NULL;
+	}
+	
+	return fp_temp;
+}
+
 // WENN FEHLER DANN VORHER AUFRÄUMEN: pipe schließen etc
 // execl("/bin/sh", "sh", "-c", command, NULL);
 
