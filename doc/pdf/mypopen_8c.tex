@@ -1,0 +1,117 @@
+\hypertarget{mypopen_8c}{
+\section{mypopen.c File Reference}
+\label{mypopen_8c}\index{mypopen.c@{mypopen.c}}
+}
+{\ttfamily \#include \char`\"{}mypopen.h\char`\"{}}\par
+Include dependency graph for mypopen.c:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=220pt]{mypopen_8c__incl}
+\end{center}
+\end{figure}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+FILE $\ast$ \hyperlink{mypopen_8c_ac47876a41dddae340e5afa64489dec86}{mypopen} (const char $\ast$command, const char $\ast$type)
+\item 
+int \hyperlink{mypopen_8c_ae75ec57d5d9b3ad79c5f5e48e5dcfd0d}{mypclose} (FILE $\ast$stream)
+\item 
+static void \hyperlink{mypopen_8c_ae5fadab3316453c336cbfe6e0a3bc10f}{childAction} (int fd\mbox{[}2\mbox{]}, int unused\_\-end, int used\_\-end, const char $\ast$command)
+\item 
+static FILE $\ast$ \hyperlink{mypopen_8c_a1ee8542fc9a69bf1be706ed8c632ab69}{parentAction} (int fd\mbox{[}2\mbox{]}, int unused\_\-end, int used\_\-end, const char $\ast$type)
+\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+static FILE $\ast$ \hyperlink{mypopen_8c_aa065f30aa9f5f9a42132c82c787ee70b}{fp} = NULL
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+mypopen\_\-mypclose Beispiel 2
+
+\begin{DoxyAuthor}{Author}
+Karin Kalman $<$\href{mailto:karin.kalman@technikum-wien.at}{\tt karin.kalman@technikum-\/wien.at}$>$ 
+
+Michael Mueller $<$\href{mailto:michael.mueller@technikum-wien.at}{\tt michael.mueller@technikum-\/wien.at}$>$ 
+
+Gerhard Sabeditsch $<$\href{mailto:gerhard.sabeditsch@technikum-wien.at}{\tt gerhard.sabeditsch@technikum-\/wien.at}$>$ 
+\end{DoxyAuthor}
+\begin{DoxyDate}{Date}
+2016/04/17
+\end{DoxyDate}
+\begin{DoxyVersion}{Version}
+
+\end{DoxyVersion}
+Revision}
+1 
+
+URL: \$HeadURL\$
+
+Last Modified: Author}
+Michael 
+
+Definition in file \hyperlink{mypopen_8c_source}{mypopen.c}.
+
+\subsection{Function Documentation}
+\hypertarget{mypopen_8c_ae5fadab3316453c336cbfe6e0a3bc10f}{
+\index{mypopen.c@{mypopen.c}!childAction@{childAction}}
+\index{childAction@{childAction}!mypopen.c@{mypopen.c}}
+\subsubsection[{childAction}]{\setlength{\rightskip}{0pt plus 5cm}static void childAction (int {\em fd}\mbox{[}2\mbox{]}, \/  int {\em unused\_\-end}, \/  int {\em used\_\-end}, \/  const char $\ast$ {\em command})\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\label{mypopen_8c_ae5fadab3316453c336cbfe6e0a3bc10f}
+
+
+Definition at line 120 of file mypopen.c.
+
+Referenced by mypopen().\hypertarget{mypopen_8c_ae75ec57d5d9b3ad79c5f5e48e5dcfd0d}{
+\index{mypopen.c@{mypopen.c}!mypclose@{mypclose}}
+\index{mypclose@{mypclose}!mypopen.c@{mypopen.c}}
+\subsubsection[{mypclose}]{\setlength{\rightskip}{0pt plus 5cm}int mypclose (FILE $\ast$ {\em stream})}}
+\label{mypopen_8c_ae75ec57d5d9b3ad79c5f5e48e5dcfd0d}
+
+
+Definition at line 106 of file mypopen.c.\hypertarget{mypopen_8c_ac47876a41dddae340e5afa64489dec86}{
+\index{mypopen.c@{mypopen.c}!mypopen@{mypopen}}
+\index{mypopen@{mypopen}!mypopen.c@{mypopen.c}}
+\subsubsection[{mypopen}]{\setlength{\rightskip}{0pt plus 5cm}FILE$\ast$ mypopen (const char $\ast$ {\em command}, \/  const char $\ast$ {\em type})}}
+\label{mypopen_8c_ac47876a41dddae340e5afa64489dec86}
+
+
+Child process
+
+Parent process 
+
+Definition at line 34 of file mypopen.c.
+
+References childAction(), fp, parentAction(), READ\_\-END, and WRITE\_\-END.
+
+Here is the call graph for this function:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=104pt]{mypopen_8c_ac47876a41dddae340e5afa64489dec86_cgraph}
+\end{center}
+\end{figure}
+\hypertarget{mypopen_8c_a1ee8542fc9a69bf1be706ed8c632ab69}{
+\index{mypopen.c@{mypopen.c}!parentAction@{parentAction}}
+\index{parentAction@{parentAction}!mypopen.c@{mypopen.c}}
+\subsubsection[{parentAction}]{\setlength{\rightskip}{0pt plus 5cm}static FILE$\ast$ parentAction (int {\em fd}\mbox{[}2\mbox{]}, \/  int {\em unused\_\-end}, \/  int {\em used\_\-end}, \/  const char $\ast$ {\em type})\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\label{mypopen_8c_a1ee8542fc9a69bf1be706ed8c632ab69}
+
+
+Definition at line 139 of file mypopen.c.
+
+Referenced by mypopen().
+
+\subsection{Variable Documentation}
+\hypertarget{mypopen_8c_aa065f30aa9f5f9a42132c82c787ee70b}{
+\index{mypopen.c@{mypopen.c}!fp@{fp}}
+\index{fp@{fp}!mypopen.c@{mypopen.c}}
+\subsubsection[{fp}]{\setlength{\rightskip}{0pt plus 5cm}FILE$\ast$ {\bf fp} = NULL\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\label{mypopen_8c_aa065f30aa9f5f9a42132c82c787ee70b}
+
+
+Definition at line 27 of file mypopen.c.
+
+Referenced by mypopen().

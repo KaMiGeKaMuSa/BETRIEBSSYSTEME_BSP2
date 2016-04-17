@@ -1,0 +1,131 @@
+\hypertarget{mypopen_8h}{
+\section{mypopen.h File Reference}
+\label{mypopen_8h}\index{mypopen.h@{mypopen.h}}
+}
+{\ttfamily \#include $<$stdio.h$>$}\par
+{\ttfamily \#include $<$stdlib.h$>$}\par
+{\ttfamily \#include $<$unistd.h$>$}\par
+{\ttfamily \#include $<$sys/types.h$>$}\par
+{\ttfamily \#include $<$errno.h$>$}\par
+{\ttfamily \#include $<$string.h$>$}\par
+Include dependency graph for mypopen.h:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=220pt]{mypopen_8h__incl}
+\end{center}
+\end{figure}
+This graph shows which files directly or indirectly include this file:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=54pt]{mypopen_8h__dep__incl}
+\end{center}
+\end{figure}
+\subsection*{Defines}
+\begin{DoxyCompactItemize}
+\item 
+\#define \hyperlink{mypopen_8h_a2469c53816dc077f9deefb187ffcabf3}{READ\_\-END}~0
+\item 
+\#define \hyperlink{mypopen_8h_a2efd706d915e621e5e18b3f0803c4ed2}{WRITE\_\-END}~1
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+FILE $\ast$ \hyperlink{mypopen_8h_ac47876a41dddae340e5afa64489dec86}{mypopen} (const char $\ast$command, const char $\ast$type)
+\item 
+int \hyperlink{mypopen_8h_ae75ec57d5d9b3ad79c5f5e48e5dcfd0d}{mypclose} (FILE $\ast$stream)
+\item 
+static void \hyperlink{mypopen_8h_ae5fadab3316453c336cbfe6e0a3bc10f}{childAction} (int fd\mbox{[}2\mbox{]}, int unused\_\-end, int used\_\-end, const char $\ast$command)
+\item 
+static FILE $\ast$ \hyperlink{mypopen_8h_a1ee8542fc9a69bf1be706ed8c632ab69}{parentAction} (int fd\mbox{[}2\mbox{]}, int unused\_\-end, int used\_\-end, const char $\ast$type)
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+mypopen\_\-mypclose Beispiel 2
+
+\begin{DoxyAuthor}{Author}
+Karin Kalman $<$\href{mailto:karin.kalman@technikum-wien.at}{\tt karin.kalman@technikum-\/wien.at}$>$ 
+
+Michael Mueller $<$\href{mailto:michael.mueller@technikum-wien.at}{\tt michael.mueller@technikum-\/wien.at}$>$ 
+
+Gerhard Sabeditsch $<$\href{mailto:gerhard.sabeditsch@technikum-wien.at}{\tt gerhard.sabeditsch@technikum-\/wien.at}$>$ 
+\end{DoxyAuthor}
+\begin{DoxyDate}{Date}
+2016/04/17
+\end{DoxyDate}
+\begin{DoxyVersion}{Version}
+
+\end{DoxyVersion}
+Revision}
+1 
+
+URL: \$HeadURL\$
+
+Last Modified: Author}
+Gerhard 
+
+Definition in file \hyperlink{mypopen_8h_source}{mypopen.h}.
+
+\subsection{Define Documentation}
+\hypertarget{mypopen_8h_a2469c53816dc077f9deefb187ffcabf3}{
+\index{mypopen.h@{mypopen.h}!READ\_\-END@{READ\_\-END}}
+\index{READ\_\-END@{READ\_\-END}!mypopen.h@{mypopen.h}}
+\subsubsection[{READ\_\-END}]{\setlength{\rightskip}{0pt plus 5cm}\#define READ\_\-END~0}}
+\label{mypopen_8h_a2469c53816dc077f9deefb187ffcabf3}
+
+
+Definition at line 38 of file mypopen.h.
+
+Referenced by mypopen().\hypertarget{mypopen_8h_a2efd706d915e621e5e18b3f0803c4ed2}{
+\index{mypopen.h@{mypopen.h}!WRITE\_\-END@{WRITE\_\-END}}
+\index{WRITE\_\-END@{WRITE\_\-END}!mypopen.h@{mypopen.h}}
+\subsubsection[{WRITE\_\-END}]{\setlength{\rightskip}{0pt plus 5cm}\#define WRITE\_\-END~1}}
+\label{mypopen_8h_a2efd706d915e621e5e18b3f0803c4ed2}
+
+
+Definition at line 39 of file mypopen.h.
+
+Referenced by mypopen().
+
+\subsection{Function Documentation}
+\hypertarget{mypopen_8h_ae5fadab3316453c336cbfe6e0a3bc10f}{
+\index{mypopen.h@{mypopen.h}!childAction@{childAction}}
+\index{childAction@{childAction}!mypopen.h@{mypopen.h}}
+\subsubsection[{childAction}]{\setlength{\rightskip}{0pt plus 5cm}static void childAction (int {\em fd}\mbox{[}2\mbox{]}, \/  int {\em unused\_\-end}, \/  int {\em used\_\-end}, \/  const char $\ast$ {\em command})\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\label{mypopen_8h_ae5fadab3316453c336cbfe6e0a3bc10f}
+\hypertarget{mypopen_8h_ae75ec57d5d9b3ad79c5f5e48e5dcfd0d}{
+\index{mypopen.h@{mypopen.h}!mypclose@{mypclose}}
+\index{mypclose@{mypclose}!mypopen.h@{mypopen.h}}
+\subsubsection[{mypclose}]{\setlength{\rightskip}{0pt plus 5cm}int mypclose (FILE $\ast$ {\em stream})}}
+\label{mypopen_8h_ae75ec57d5d9b3ad79c5f5e48e5dcfd0d}
+
+
+Definition at line 106 of file mypopen.c.\hypertarget{mypopen_8h_ac47876a41dddae340e5afa64489dec86}{
+\index{mypopen.h@{mypopen.h}!mypopen@{mypopen}}
+\index{mypopen@{mypopen}!mypopen.h@{mypopen.h}}
+\subsubsection[{mypopen}]{\setlength{\rightskip}{0pt plus 5cm}FILE$\ast$ mypopen (const char $\ast$ {\em command}, \/  const char $\ast$ {\em type})}}
+\label{mypopen_8h_ac47876a41dddae340e5afa64489dec86}
+
+
+Child process
+
+Parent process 
+
+Definition at line 34 of file mypopen.c.
+
+References childAction(), fp, parentAction(), READ\_\-END, and WRITE\_\-END.
+
+Here is the call graph for this function:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=104pt]{mypopen_8h_ac47876a41dddae340e5afa64489dec86_cgraph}
+\end{center}
+\end{figure}
+\hypertarget{mypopen_8h_a1ee8542fc9a69bf1be706ed8c632ab69}{
+\index{mypopen.h@{mypopen.h}!parentAction@{parentAction}}
+\index{parentAction@{parentAction}!mypopen.h@{mypopen.h}}
+\subsubsection[{parentAction}]{\setlength{\rightskip}{0pt plus 5cm}static FILE$\ast$ parentAction (int {\em fd}\mbox{[}2\mbox{]}, \/  int {\em unused\_\-end}, \/  int {\em used\_\-end}, \/  const char $\ast$ {\em type})\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\label{mypopen_8h_a1ee8542fc9a69bf1be706ed8c632ab69}
