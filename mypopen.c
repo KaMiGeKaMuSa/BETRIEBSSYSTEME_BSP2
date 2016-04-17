@@ -22,34 +22,38 @@
 #include "mypopen.h"
 
 /*
- * ------------------------------------------------- local static variables --
+ * -------------------------------------------------------------- local static variables --
  */
 static FILE* fp = NULL;
 
 
 /*
- * ------------------------------------------------------ mypopen -function --
+ * -------------------------------------------------------------- mypopen -function --
  */
 // BSP: http://stackoverflow.com/questions/9255425/writing-to-a-pipe-with-a-child-and-parent-process    
 FILE *mypopen(const char *command, const char *type)
 {
-	int fd[2];
+	//variable for file descriptor
+    int fd[2];
 	pid_t childpid;
 	
-	if (fp != NULL)
+	//check if filepointer is already open -> if so, then thats not OK -> only one instance is allowed
+    if (fp != NULL)
 	{
 		errno = EAGAIN;
 		return NULL;
 	}
 	
-	if ((strcmp(type, "r") != 0 && strcmp(type, "w") != 0) || command == NULL)
+	//check if correct type is given
+    if ((strcmp(type, "r") != 0 && strcmp(type, "w") != 0) || command == NULL)
 	{
 		// no valid type
 		errno = EINVAL;
 		return NULL;
 	}
 	
-	/* Open new pipe
+	/* 
+     * Open new pipe
      * - return value fd[0] is for reading
 	 * - return value fd[1] is for writing
      */
@@ -60,7 +64,7 @@ FILE *mypopen(const char *command, const char *type)
 	}
 	
 	/*
-     *if fork() is successful it return twice:
+     * if fork() is successful it return twice:
      * - in parent process the return value is the process id (PID) of the childprocess
      * - in child process the return value is 0
      */
@@ -101,21 +105,67 @@ FILE *mypopen(const char *command, const char *type)
 
 
 /*
- * ------------------------------------------------------ mypclose -function --
+ * -------------------------------------------------------------- mypclose -function --
  */
 int mypclose(FILE *stream)
 {
-	return pclose(stream);
+    int state;
+
+    /*check if filepointer is already open -> if NOT, then thats not OK -> popen should be run first!*/
+    if (fp == NULL)
+    {
+        errno = ECHILD;
+        return -1;
+    }
+    
+    
+    /* check if stream is the correct stream to close */
+    if (fp != stream) {
+        errno = EINVAL;
+        return -1;
+    }
+    
+    /*if fclose returns an EOF, then there was already a stream passing-> Error -1*/
+    if (fclose(stream) == EOF) {
+        fp = NULL;
+        errno = ECHILD;
+        return -1;
+    }
+    
+    /*wait till errno == EINTR*/
+    do {
+        wait(&state);
+    } while (errno == EINTR);
+    
+    /*after errno = EINTR, then filepointer chang set to NULL */
+    fp = NULL;
+    
+    
+    /* only when state != 0 everything is OK */
+    if (WIFEXITED(state) != 0) {
+        return WEXITSTATUS(state);
+    }
+    
+    errno = ECHILD;
+    return -1;
+    
+
+    
+    //return pclose(stream);
 }
 
 
 
-
-
-
+/*
+ * -------------------------------------------------------------- help - functions --
+ */
 
 /*
- * ------------------------------------------------------- help - functions --
+ * static void childAction(int fd[2], int unused_end, int used_end, const char *command)
+ * FUNCTION is only for the CHILD PROCESS:
+ * -this function link the used file descriptor with the parent process stdout
+ * -this function also close the unused file descriptor
+ * -this function executes the given command in a normal shell like popen
  */
 static void childAction(int fd[2], int unused_end, int used_end, const char *command)
 {
@@ -136,6 +186,14 @@ static void childAction(int fd[2], int unused_end, int used_end, const char *com
 	_exit(EXIT_FAILURE);
 }
 
+
+/*
+ * static FILE * parentAction(int fd[2], int unused_end, int used_end, const char *type)
+ * FUNCTION is only for the PARENT PROCESS:
+ * -this function link the used file descriptor with the parent process stin
+ * -this function also close the unused file descriptor
+ * -this function convert the used filedescriptor into a filepointer and returns the filepointer
+ */
 static FILE * parentAction(int fd[2], int unused_end, int used_end, const char *type)
 {
 	FILE* fp_temp = NULL; 
