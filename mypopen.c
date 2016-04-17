@@ -57,7 +57,7 @@ FILE *mypopen(const char *command, const char *type)
      * - return value fd[0] is for reading
 	 * - return value fd[1] is for writing
      */
-     if(pipe(fd))
+     if(pipe(fd) == -1)
 	{
 		// pipe failed: according to documentation NULL should be returned
 		return NULL;
@@ -74,7 +74,7 @@ FILE *mypopen(const char *command, const char *type)
 	if(childpid == (pid_t) 0)
 	{
 		// read command
-		if (strcmp(type, "r"))
+		if (strcmp(type, "r") == 0)
 			childAction(fd, READ_END, WRITE_END, command);
 		// write command		
 		else 
@@ -84,7 +84,7 @@ FILE *mypopen(const char *command, const char *type)
 	else if (childpid > (pid_t) 0)
 	{
 		// read command
-		if (strcmp(type, "r"))
+		if (strcmp(type, "r") == 0)
 			fp = parentAction(fd, WRITE_END, READ_END, type);
 		// write command		
 		else 
@@ -167,19 +167,19 @@ static void childAction(int fd[2], int unused_end, int used_end, const char *com
 {
 	// close unused pipe end
 	close (fd[unused_end]);
-	
-	// Link STDOUT with pipe fd
-	if (dup2(fd[used_end], STDOUT_FILENO) == -1) {
+
+        // Link STDOUT with pipe fd
+        if (dup2(fd[used_end], STDOUT_FILENO) == -1) {
 		// dup2 failed: close pipe and end child process (NO RETURN, because then child and parent would send return value to main) 
 		close (fd[used_end]);
-		_exit(EXIT_FAILURE);
-	}
-	
+		exit(EXIT_FAILURE);
+        }
+
 	// Execute the command in a shell:
 	execl("/bin/sh", "sh", "-c", command, NULL);
 	
 	// This code only get executed if execl fails. This code is used to "kill" the child process:
-	_exit(EXIT_FAILURE);
+	exit(EXIT_FAILURE);
 }
 
 
