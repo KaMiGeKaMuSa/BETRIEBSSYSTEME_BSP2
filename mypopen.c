@@ -137,7 +137,7 @@ int mypclose(FILE *stream)
         wait(&state);
     } while (errno == EINTR);
     
-    /*after errno = EINTR, then filepointer chang set to NULL */
+    /*after errno == EINTR, then filepointer can set to NULL */
     fp = NULL;
     
     
@@ -149,11 +149,7 @@ int mypclose(FILE *stream)
     errno = ECHILD;
     return -1;
     
-
-    
-    //return pclose(stream);
 }
-
 
 
 /*
