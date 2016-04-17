@@ -1,7 +1,35 @@
+/**
+ * @file mypopen.c
+ * mypopen_mypclose
+ * Beispiel 2
+ *
+ * @author Karin Kalman <karin.kalman@technikum-wien.at>
+ * @author Michael Mueller <michael.mueller@technikum-wien.at>
+ * @author Gerhard Sabeditsch <gerhard.sabeditsch@technikum-wien.at>
+ * @date 2016/04/17
+ *
+ * @version $Revision: 1 $
+ *
+ *
+ * URL: $HeadURL$
+ *
+ * Last Modified: $Author: Michael $
+ */
+
+/*
+ * -------------------------------------------------------------- includes --
+ */
 #include "mypopen.h"
 
+/*
+ * ------------------------------------------------- local static variables --
+ */
 static FILE* fp = NULL;
 
+
+/*
+ * ------------------------------------------------------ mypopen -function --
+ */
 // BSP: http://stackoverflow.com/questions/9255425/writing-to-a-pipe-with-a-child-and-parent-process    
 FILE *mypopen(const char *command, const char *type)
 {
@@ -21,21 +49,24 @@ FILE *mypopen(const char *command, const char *type)
 		return NULL;
 	}
 	
-	// Open new pipe 
-	// - return value fd[0] is for reading
-	// - return value fd[1] is for writing
-	if(pipe(fd))
+	/* Open new pipe
+     * - return value fd[0] is for reading
+	 * - return value fd[1] is for writing
+     */
+     if(pipe(fd))
 	{
 		// pipe failed: according to documentation NULL should be returned
 		return NULL;
 	}
 	
-	// if fork() is successful it return twice: 
-	// 		- in parent process the return value is the process id (PID) of the childprocess
-	//		- in child process the return value is 0
+	/*
+     *if fork() is successful it return twice:
+     * - in parent process the return value is the process id (PID) of the childprocess
+     * - in child process the return value is 0
+     */
     childpid = fork();
 	
-	// Child process
+	/// Child process
 	if(childpid == (pid_t) 0)
 	{
 		// read command
@@ -45,7 +76,7 @@ FILE *mypopen(const char *command, const char *type)
 		else 
 			childAction(fd, WRITE_END, READ_END, command);
 	}
-	// Parent process
+	/// Parent process
 	else if (childpid > (pid_t) 0)
 	{
 		// read command
@@ -65,12 +96,27 @@ FILE *mypopen(const char *command, const char *type)
 	
 	return fp;
 }
-	  
+
+
+
+
+/*
+ * ------------------------------------------------------ mypclose -function --
+ */
 int mypclose(FILE *stream)
 {
 	return pclose(stream);
 }
 
+
+
+
+
+
+
+/*
+ * ------------------------------------------------------- help - functions --
+ */
 static void childAction(int fd[2], int unused_end, int used_end, const char *command)
 {
 	// close unused pipe end
