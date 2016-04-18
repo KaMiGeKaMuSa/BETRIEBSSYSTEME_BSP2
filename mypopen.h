@@ -45,7 +45,7 @@
 
 FILE *mypopen(const char *command, const char *type);
 int mypclose(FILE *stream);
-static void childAction(int fd[2], int unused_end, int used_end, const char *command);
+static void childAction(int fd[2], int unused_end, int used_end, const char *command, int fileno);
 static FILE * parentAction(int fd[2], int unused_end, int used_end, const char *type);
 
 #endif /* _MYPOPEN_H_ */

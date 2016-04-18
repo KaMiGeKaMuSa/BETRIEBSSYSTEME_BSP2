@@ -75,10 +75,10 @@ FILE *mypopen(const char *command, const char *type)
 	{
 		// read command
 		if (strcmp(type, "r") == 0)
-			childAction(fd, READ_END, WRITE_END, command);
+			childAction(fd, READ_END, WRITE_END, command, STDOUT_FILENO);
 		// write command		
 		else 
-			childAction(fd, WRITE_END, READ_END, command);
+			childAction(fd, WRITE_END, READ_END, command, STDIN_FILENO);
 	}
 	/// Parent process
 	else if (childpid > (pid_t) 0)
@@ -89,6 +89,8 @@ FILE *mypopen(const char *command, const char *type)
 		// write command		
 		else 
 			fp = parentAction(fd, READ_END, WRITE_END, type);
+		
+
 	}
 	else 
 	{
@@ -132,9 +134,12 @@ int mypclose(FILE *stream)
         return -1;
     }
     
+	errno = 0;
+	
     /*wait till errno == EINTR*/
     do {
-        wait(&state);
+       //if (wait(&state)) == -1 && errno != 0)
+		wait(&state);
     } while (errno == EINTR);
     
     /*after errno == EINTR, then filepointer can set to NULL */
@@ -151,7 +156,6 @@ int mypclose(FILE *stream)
     
 }
 
-
 /*
  * -------------------------------------------------------------- help - functions --
  */
@@ -163,17 +167,18 @@ int mypclose(FILE *stream)
  * -this function also close the unused file descriptor
  * -this function executes the given command in a normal shell like popen
  */
-static void childAction(int fd[2], int unused_end, int used_end, const char *command)
+static void childAction(int fd[2], int unused_end, int used_end, const char *command, int fileno)
 {
 	// close unused pipe end
 	close (fd[unused_end]);
 
-        // Link STDOUT with pipe fd
-        if (dup2(fd[used_end], STDOUT_FILENO) == -1) {
+	// Link STDOUT with pipe fd
+	if (dup2(fd[used_end], fileno) == -1) {
 		// dup2 failed: close pipe and end child process (NO RETURN, because then child and parent would send return value to main) 
 		close (fd[used_end]);
 		exit(EXIT_FAILURE);
-        }
+	}
+	close(fd[used_end]);
 
 	// Execute the command in a shell:
 	execl("/bin/sh", "sh", "-c", command, NULL);
@@ -198,11 +203,11 @@ static FILE * parentAction(int fd[2], int unused_end, int used_end, const char *
 	close (fd[unused_end]);
 	
 	// Link STDIN with pipe fd
-	if (dup2(fd[used_end], STDIN_FILENO) == -1) {
+	/*if (dup2(fd[used_end], STDIN_FILENO) == -1) {
 		// dup2 failed 
 		close (fd[used_end]);
 		return NULL;
-	}
+	}*/
 	
 	// Convert file descriptor into file pointer
 	if ((fp_temp = fdopen(fd[used_end], type)) == NULL) 
@@ -211,7 +216,6 @@ static FILE * parentAction(int fd[2], int unused_end, int used_end, const char *
 		close(fd[used_end]);
 		return NULL;
 	}
-	close(fd[used_end]);
 	
 	return fp_temp;
 }
