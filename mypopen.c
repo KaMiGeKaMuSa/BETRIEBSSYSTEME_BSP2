@@ -211,6 +211,7 @@ static FILE * parentAction(int fd[2], int unused_end, int used_end, const char *
 		close(fd[used_end]);
 		return NULL;
 	}
+	close(fd[used_end]);
 	
 	return fp_temp;
 }
