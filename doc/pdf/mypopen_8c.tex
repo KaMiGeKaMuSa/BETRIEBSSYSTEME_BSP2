@@ -7,7 +7,7 @@ Include dependency graph for mypopen.c:\nopagebreak
 \begin{figure}[H]
 \begin{center}
 \leavevmode
-\includegraphics[width=220pt]{mypopen_8c__incl}
+\includegraphics[width=260pt]{mypopen_8c__incl}
 \end{center}
 \end{figure}
 \subsection*{Functions}
@@ -17,7 +17,7 @@ FILE $\ast$ \hyperlink{mypopen_8c_ac47876a41dddae340e5afa64489dec86}{mypopen} (c
 \item 
 int \hyperlink{mypopen_8c_ae75ec57d5d9b3ad79c5f5e48e5dcfd0d}{mypclose} (FILE $\ast$stream)
 \item 
-static void \hyperlink{mypopen_8c_ae5fadab3316453c336cbfe6e0a3bc10f}{childAction} (int fd\mbox{[}2\mbox{]}, int unused\_\-end, int used\_\-end, const char $\ast$command)
+static void \hyperlink{mypopen_8c_a974c9687b94a06aadad2daab081db4ba}{childAction} (int fd\mbox{[}2\mbox{]}, int unused\_\-end, int used\_\-end, const char $\ast$command, int fileno)
 \item 
 static FILE $\ast$ \hyperlink{mypopen_8c_a1ee8542fc9a69bf1be706ed8c632ab69}{parentAction} (int fd\mbox{[}2\mbox{]}, int unused\_\-end, int used\_\-end, const char $\ast$type)
 \end{DoxyCompactItemize}
@@ -25,6 +25,8 @@ static FILE $\ast$ \hyperlink{mypopen_8c_a1ee8542fc9a69bf1be706ed8c632ab69}{pare
 \begin{DoxyCompactItemize}
 \item 
 static FILE $\ast$ \hyperlink{mypopen_8c_aa065f30aa9f5f9a42132c82c787ee70b}{fp} = NULL
+\item 
+static pid\_\-t \hyperlink{mypopen_8c_a8aecc963beadbaa964f33e98502b0526}{childpid}
 \end{DoxyCompactItemize}
 
 
@@ -45,46 +47,60 @@ Gerhard Sabeditsch $<$\href{mailto:gerhard.sabeditsch@technikum-wien.at}{\tt ger
 
 \end{DoxyVersion}
 Revision}
-1 
+2 
 
 URL: \$HeadURL\$
 
 Last Modified: Author}
-Michael 
+Gerhard 
 
 Definition in file \hyperlink{mypopen_8c_source}{mypopen.c}.
 
 \subsection{Function Documentation}
-\hypertarget{mypopen_8c_ae5fadab3316453c336cbfe6e0a3bc10f}{
+\hypertarget{mypopen_8c_a974c9687b94a06aadad2daab081db4ba}{
 \index{mypopen.c@{mypopen.c}!childAction@{childAction}}
 \index{childAction@{childAction}!mypopen.c@{mypopen.c}}
-\subsubsection[{childAction}]{\setlength{\rightskip}{0pt plus 5cm}static void childAction (int {\em fd}\mbox{[}2\mbox{]}, \/  int {\em unused\_\-end}, \/  int {\em used\_\-end}, \/  const char $\ast$ {\em command})\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
-\label{mypopen_8c_ae5fadab3316453c336cbfe6e0a3bc10f}
+\subsubsection[{childAction}]{\setlength{\rightskip}{0pt plus 5cm}static void childAction (int {\em fd}\mbox{[}2\mbox{]}, \/  int {\em unused\_\-end}, \/  int {\em used\_\-end}, \/  const char $\ast$ {\em command}, \/  int {\em fileno})\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\label{mypopen_8c_a974c9687b94a06aadad2daab081db4ba}
+-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/ help -\/ functions -\/-\/ static void childAction(int fd\mbox{[}2\mbox{]}, int unused\_\-end, int used\_\-end, const char $\ast$command) FUNCTION is only for the CHILD PROCESS: -\/this function link the used file descriptor with the parent process stdout -\/this function also close the unused file descriptor -\/this function executes the given command in a normal shell like popen 
 
-
-Definition at line 120 of file mypopen.c.
+Definition at line 182 of file mypopen.c.
 
 Referenced by mypopen().\hypertarget{mypopen_8c_ae75ec57d5d9b3ad79c5f5e48e5dcfd0d}{
 \index{mypopen.c@{mypopen.c}!mypclose@{mypclose}}
 \index{mypclose@{mypclose}!mypopen.c@{mypopen.c}}
 \subsubsection[{mypclose}]{\setlength{\rightskip}{0pt plus 5cm}int mypclose (FILE $\ast$ {\em stream})}}
 \label{mypopen_8c_ae75ec57d5d9b3ad79c5f5e48e5dcfd0d}
+-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/ mypclose -\/function -\/-\/ 
 
+Definition at line 110 of file mypopen.c.
 
-Definition at line 106 of file mypopen.c.\hypertarget{mypopen_8c_ac47876a41dddae340e5afa64489dec86}{
+References childpid, and fp.\hypertarget{mypopen_8c_ac47876a41dddae340e5afa64489dec86}{
 \index{mypopen.c@{mypopen.c}!mypopen@{mypopen}}
 \index{mypopen@{mypopen}!mypopen.c@{mypopen.c}}
 \subsubsection[{mypopen}]{\setlength{\rightskip}{0pt plus 5cm}FILE$\ast$ mypopen (const char $\ast$ {\em command}, \/  const char $\ast$ {\em type})}}
 \label{mypopen_8c_ac47876a41dddae340e5afa64489dec86}
+-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/ mypopen -\/function -\/-\/ 
 
+Open new pipe
+\begin{DoxyItemize}
+\item return value fd\mbox{[}0\mbox{]} is for reading
+\item return value fd\mbox{[}1\mbox{]} is for writing
+\end{DoxyItemize}
+
+if fork() is successful it return twice:
+\begin{DoxyItemize}
+\item in parent process the return value is the process id (PID) of the childprocess
+\item in child process the return value is 0
+\end{DoxyItemize}
 
 Child process
 
 Parent process 
 
-Definition at line 34 of file mypopen.c.
+Definition at line 33 of file mypopen.c.
 
-References childAction(), fp, parentAction(), READ\_\-END, and WRITE\_\-END.
+References childAction(), childpid, fp, parentAction(), READ\_\-END, and WRITE\_\-END.
 
 Here is the call graph for this function:\nopagebreak
 \begin{figure}[H]
@@ -98,20 +114,29 @@ Here is the call graph for this function:\nopagebreak
 \index{parentAction@{parentAction}!mypopen.c@{mypopen.c}}
 \subsubsection[{parentAction}]{\setlength{\rightskip}{0pt plus 5cm}static FILE$\ast$ parentAction (int {\em fd}\mbox{[}2\mbox{]}, \/  int {\em unused\_\-end}, \/  int {\em used\_\-end}, \/  const char $\ast$ {\em type})\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
 \label{mypopen_8c_a1ee8542fc9a69bf1be706ed8c632ab69}
+static FILE $\ast$ parentAction(int fd\mbox{[}2\mbox{]}, int unused\_\-end, int used\_\-end, const char $\ast$type) FUNCTION is only for the PARENT PROCESS: -\/this function link the used file descriptor with the parent process stin -\/this function also close the unused file descriptor -\/this function convert the used filedescriptor into a filepointer and returns the filepointer 
 
-
-Definition at line 139 of file mypopen.c.
+Definition at line 210 of file mypopen.c.
 
 Referenced by mypopen().
 
 \subsection{Variable Documentation}
-\hypertarget{mypopen_8c_aa065f30aa9f5f9a42132c82c787ee70b}{
+\hypertarget{mypopen_8c_a8aecc963beadbaa964f33e98502b0526}{
+\index{mypopen.c@{mypopen.c}!childpid@{childpid}}
+\index{childpid@{childpid}!mypopen.c@{mypopen.c}}
+\subsubsection[{childpid}]{\setlength{\rightskip}{0pt plus 5cm}pid\_\-t {\bf childpid}\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\label{mypopen_8c_a8aecc963beadbaa964f33e98502b0526}
+
+
+Definition at line 28 of file mypopen.c.
+
+Referenced by mypclose(), and mypopen().\hypertarget{mypopen_8c_aa065f30aa9f5f9a42132c82c787ee70b}{
 \index{mypopen.c@{mypopen.c}!fp@{fp}}
 \index{fp@{fp}!mypopen.c@{mypopen.c}}
 \subsubsection[{fp}]{\setlength{\rightskip}{0pt plus 5cm}FILE$\ast$ {\bf fp} = NULL\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
 \label{mypopen_8c_aa065f30aa9f5f9a42132c82c787ee70b}
-
+-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/ includes -\/-\/ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/ global static variables -\/-\/ 
 
 Definition at line 27 of file mypopen.c.
 
-Referenced by mypopen().
+Referenced by mypclose(), and mypopen().

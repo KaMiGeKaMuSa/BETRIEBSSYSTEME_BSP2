@@ -33,28 +33,29 @@
 <a name="l00028"></a>00028 <span class="preprocessor">#include &lt;stdlib.h&gt;</span>
 <a name="l00029"></a>00029 <span class="preprocessor">#include &lt;unistd.h&gt;</span>
 <a name="l00030"></a>00030 <span class="preprocessor">#include &lt;sys/types.h&gt;</span>
-<a name="l00031"></a>00031 <span class="preprocessor">#include &lt;errno.h&gt;</span>
-<a name="l00032"></a>00032 <span class="preprocessor">#include &lt;string.h&gt;</span>
-<a name="l00033"></a>00033 
-<a name="l00034"></a>00034 <span class="comment">/*</span>
-<a name="l00035"></a>00035 <span class="comment"> * --------------------------------------------------------------- defines --</span>
-<a name="l00036"></a>00036 <span class="comment"> */</span>
-<a name="l00037"></a>00037 
-<a name="l00038"></a><a class="code" href="mypopen_8h.html#a2469c53816dc077f9deefb187ffcabf3">00038</a> <span class="preprocessor">#define READ_END 0</span>
-<a name="l00039"></a><a class="code" href="mypopen_8h.html#a2efd706d915e621e5e18b3f0803c4ed2">00039</a> <span class="preprocessor"></span><span class="preprocessor">#define WRITE_END 1</span>
-<a name="l00040"></a>00040 <span class="preprocessor"></span>
-<a name="l00041"></a>00041 <span class="comment">/*</span>
-<a name="l00042"></a>00042 <span class="comment"> * --------------------------------------------------- function prototypes --</span>
-<a name="l00043"></a>00043 <span class="comment"> */</span>
-<a name="l00044"></a>00044 
-<a name="l00045"></a>00045 FILE *<a class="code" href="mypopen_8c.html#ac47876a41dddae340e5afa64489dec86">mypopen</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> *command, <span class="keyword">const</span> <span class="keywordtype">char</span> *type);
-<a name="l00046"></a>00046 <span class="keywordtype">int</span> <a class="code" href="mypopen_8c.html#ae75ec57d5d9b3ad79c5f5e48e5dcfd0d">mypclose</a>(FILE *stream);
-<a name="l00047"></a>00047 <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code" href="mypopen_8h.html#ae5fadab3316453c336cbfe6e0a3bc10f">childAction</a>(<span class="keywordtype">int</span> fd[2], <span class="keywordtype">int</span> unused_end, <span class="keywordtype">int</span> used_end, <span class="keyword">const</span> <span class="keywordtype">char</span> *command);
-<a name="l00048"></a>00048 <span class="keyword">static</span> FILE * <a class="code" href="mypopen_8h.html#a1ee8542fc9a69bf1be706ed8c632ab69">parentAction</a>(<span class="keywordtype">int</span> fd[2], <span class="keywordtype">int</span> unused_end, <span class="keywordtype">int</span> used_end, <span class="keyword">const</span> <span class="keywordtype">char</span> *type);
-<a name="l00049"></a>00049 
-<a name="l00050"></a>00050 <span class="preprocessor">#endif </span><span class="comment">/* _MYPOPEN_H_ */</span>
+<a name="l00031"></a>00031 <span class="preprocessor">#include &lt;sys/wait.h&gt;</span>
+<a name="l00032"></a>00032 <span class="preprocessor">#include &lt;errno.h&gt;</span>
+<a name="l00033"></a>00033 <span class="preprocessor">#include &lt;string.h&gt;</span>
+<a name="l00034"></a>00034 
+<a name="l00035"></a>00035 <span class="comment">/*</span>
+<a name="l00036"></a>00036 <span class="comment"> * --------------------------------------------------------------- defines --</span>
+<a name="l00037"></a>00037 <span class="comment"> */</span>
+<a name="l00038"></a>00038 
+<a name="l00039"></a><a class="code" href="mypopen_8h.html#a2469c53816dc077f9deefb187ffcabf3">00039</a> <span class="preprocessor">#define READ_END 0</span>
+<a name="l00040"></a><a class="code" href="mypopen_8h.html#a2efd706d915e621e5e18b3f0803c4ed2">00040</a> <span class="preprocessor"></span><span class="preprocessor">#define WRITE_END 1</span>
+<a name="l00041"></a>00041 <span class="preprocessor"></span>
+<a name="l00042"></a>00042 <span class="comment">/*</span>
+<a name="l00043"></a>00043 <span class="comment"> * --------------------------------------------------- function prototypes --</span>
+<a name="l00044"></a>00044 <span class="comment"> */</span>
+<a name="l00045"></a>00045 
+<a name="l00046"></a>00046 FILE *<a class="code" href="mypopen_8c.html#ac47876a41dddae340e5afa64489dec86">mypopen</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> *command, <span class="keyword">const</span> <span class="keywordtype">char</span> *type);
+<a name="l00047"></a>00047 <span class="keywordtype">int</span> <a class="code" href="mypopen_8c.html#ae75ec57d5d9b3ad79c5f5e48e5dcfd0d">mypclose</a>(FILE *stream);
+<a name="l00048"></a>00048 <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code" href="mypopen_8h.html#a974c9687b94a06aadad2daab081db4ba">childAction</a>(<span class="keywordtype">int</span> fd[2], <span class="keywordtype">int</span> unused_end, <span class="keywordtype">int</span> used_end, <span class="keyword">const</span> <span class="keywordtype">char</span> *command, <span class="keywordtype">int</span> fileno);
+<a name="l00049"></a>00049 <span class="keyword">static</span> FILE * <a class="code" href="mypopen_8h.html#a1ee8542fc9a69bf1be706ed8c632ab69">parentAction</a>(<span class="keywordtype">int</span> fd[2], <span class="keywordtype">int</span> unused_end, <span class="keywordtype">int</span> used_end, <span class="keyword">const</span> <span class="keywordtype">char</span> *type);
+<a name="l00050"></a>00050 
+<a name="l00051"></a>00051 <span class="preprocessor">#endif </span><span class="comment">/* _MYPOPEN_H_ */</span>
 </pre></div></div>
-<hr size="1"/><address style="text-align: right;"><small>Generated on 17 Apr 2016 for mypopen_mypclose by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 21 Apr 2016 for mypopen_mypclose by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>

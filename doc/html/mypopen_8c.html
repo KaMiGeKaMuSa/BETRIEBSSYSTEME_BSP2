@@ -29,7 +29,7 @@ Include dependency graph for mypopen.c:</div>
 <div class="dynsection">
 <div class="center"><img src="mypopen_8c__incl.png" border="0" usemap="#mypopen_8c_map" alt=""/></div>
 <map name="mypopen_8c_map" id="mypopen_8c">
-<area shape="rect" id="node3" href="mypopen_8h.html" title="mypopen.h" alt="" coords="220,83,305,112"/></map>
+<area shape="rect" id="node3" href="mypopen_8h.html" title="mypopen.h" alt="" coords="272,83,357,112"/></map>
 </div>
 
 <p><a href="mypopen_8c_source.html">Go to the source code of this file.</a></p>
@@ -37,10 +37,11 @@ Include dependency graph for mypopen.c:</div>
 <tr><td colspan="2"><h2>Functions</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">FILE *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="mypopen_8c.html#ac47876a41dddae340e5afa64489dec86">mypopen</a> (const char *command, const char *type)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">int&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="mypopen_8c.html#ae75ec57d5d9b3ad79c5f5e48e5dcfd0d">mypclose</a> (FILE *stream)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">static void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="mypopen_8c.html#ae5fadab3316453c336cbfe6e0a3bc10f">childAction</a> (int fd[2], int unused_end, int used_end, const char *command)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">static void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="mypopen_8c.html#a974c9687b94a06aadad2daab081db4ba">childAction</a> (int fd[2], int unused_end, int used_end, const char *command, int fileno)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">static FILE *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="mypopen_8c.html#a1ee8542fc9a69bf1be706ed8c632ab69">parentAction</a> (int fd[2], int unused_end, int used_end, const char *type)</td></tr>
 <tr><td colspan="2"><h2>Variables</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">static FILE *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="mypopen_8c.html#aa065f30aa9f5f9a42132c82c787ee70b">fp</a> = NULL</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">static pid_t&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="mypopen_8c.html#a8aecc963beadbaa964f33e98502b0526">childpid</a></td></tr>
 </table>
 <hr/><a name="_details"></a><h2>Detailed Description</h2>
 <p>mypopen_mypclose Beispiel 2</p>
@@ -51,14 +52,14 @@ Michael Mueller &lt;<a href="mailto:michael.mueller@technikum-wien.at">michael.m
 Gerhard Sabeditsch &lt;<a href="mailto:gerhard.sabeditsch@technikum-wien.at">gerhard.sabeditsch@technikum-wien.at</a>&gt; </dd></dl>
 <dl class="date"><dt><b>Date:</b></dt><dd>2016/04/17</dd></dl>
 <dl class="version"><dt><b>Version:</b></dt><dd></dd></dl>
-<dl class="rcs"><dt><b>Revision</b></dt><dd>1 </dd></dl>
+<dl class="rcs"><dt><b>Revision</b></dt><dd>2 </dd></dl>
 <p>URL: $HeadURL$</p>
 <p>Last Modified: </p>
-<dl class="rcs"><dt><b>Author</b></dt><dd>Michael </dd></dl>
+<dl class="rcs"><dt><b>Author</b></dt><dd>Gerhard </dd></dl>
 
 <p>Definition in file <a class="el" href="mypopen_8c_source.html">mypopen.c</a>.</p>
 <hr/><h2>Function Documentation</h2>
-<a class="anchor" id="ae5fadab3316453c336cbfe6e0a3bc10f"></a><!-- doxytag: member="mypopen.c::childAction" ref="ae5fadab3316453c336cbfe6e0a3bc10f" args="(int fd[2], int unused_end, int used_end, const char *command)" -->
+<a class="anchor" id="a974c9687b94a06aadad2daab081db4ba"></a><!-- doxytag: member="mypopen.c::childAction" ref="a974c9687b94a06aadad2daab081db4ba" args="(int fd[2], int unused_end, int used_end, const char *command, int fileno)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -84,7 +85,13 @@ Gerhard Sabeditsch &lt;<a href="mailto:gerhard.sabeditsch@technikum-wien.at">ger
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const char *&nbsp;</td>
-          <td class="paramname"> <em>command</em></td><td>&nbsp;</td>
+          <td class="paramname"> <em>command</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&nbsp;</td>
+          <td class="paramname"> <em>fileno</em></td><td>&nbsp;</td>
         </tr>
         <tr>
           <td></td>
@@ -94,10 +101,11 @@ Gerhard Sabeditsch &lt;<a href="mailto:gerhard.sabeditsch@technikum-wien.at">ger
       </table>
 </div>
 <div class="memdoc">
+<p>-------------------------------------------------------------- help - functions -- static void childAction(int fd[2], int unused_end, int used_end, const char *command) FUNCTION is only for the CHILD PROCESS: -this function link the used file descriptor with the parent process stdout -this function also close the unused file descriptor -this function executes the given command in a normal shell like popen </p>
 
-<p>Definition at line <a class="el" href="mypopen_8c_source.html#l00120">120</a> of file <a class="el" href="mypopen_8c_source.html">mypopen.c</a>.</p>
+<p>Definition at line <a class="el" href="mypopen_8c_source.html#l00182">182</a> of file <a class="el" href="mypopen_8c_source.html">mypopen.c</a>.</p>
 
-<p>Referenced by <a class="el" href="mypopen_8c_source.html#l00034">mypopen()</a>.</p>
+<p>Referenced by <a class="el" href="mypopen_8c_source.html#l00033">mypopen()</a>.</p>
 
 </div>
 </div>
@@ -116,8 +124,11 @@ Gerhard Sabeditsch &lt;<a href="mailto:gerhard.sabeditsch@technikum-wien.at">ger
       </table>
 </div>
 <div class="memdoc">
+<p>-------------------------------------------------------------- mypclose -function -- </p>
 
-<p>Definition at line <a class="el" href="mypopen_8c_source.html#l00106">106</a> of file <a class="el" href="mypopen_8c_source.html">mypopen.c</a>.</p>
+<p>Definition at line <a class="el" href="mypopen_8c_source.html#l00110">110</a> of file <a class="el" href="mypopen_8c_source.html">mypopen.c</a>.</p>
+
+<p>References <a class="el" href="mypopen_8c_source.html#l00028">childpid</a>, and <a class="el" href="mypopen_8c_source.html#l00027">fp</a>.</p>
 
 </div>
 </div>
@@ -145,21 +156,32 @@ Gerhard Sabeditsch &lt;<a href="mailto:gerhard.sabeditsch@technikum-wien.at">ger
       </table>
 </div>
 <div class="memdoc">
+<p>-------------------------------------------------------------- mypopen -function -- </p>
 
-<p><p>Child process</p>
+<p><p>Open new pipe</p>
+<ul>
+<li>return value fd[0] is for reading</li>
+<li>return value fd[1] is for writing</li>
+</ul>
+<p>if fork() is successful it return twice:</p>
+<ul>
+<li>in parent process the return value is the process id (PID) of the childprocess</li>
+<li>in child process the return value is 0</li>
+</ul>
+<p>Child process</p>
 <p>Parent process </p>
 </p>
 
-<p>Definition at line <a class="el" href="mypopen_8c_source.html#l00034">34</a> of file <a class="el" href="mypopen_8c_source.html">mypopen.c</a>.</p>
+<p>Definition at line <a class="el" href="mypopen_8c_source.html#l00033">33</a> of file <a class="el" href="mypopen_8c_source.html">mypopen.c</a>.</p>
 
-<p>References <a class="el" href="mypopen_8c_source.html#l00120">childAction()</a>, <a class="el" href="mypopen_8c_source.html#l00027">fp</a>, <a class="el" href="mypopen_8c_source.html#l00139">parentAction()</a>, <a class="el" href="mypopen_8h_source.html#l00038">READ_END</a>, and <a class="el" href="mypopen_8h_source.html#l00039">WRITE_END</a>.</p>
+<p>References <a class="el" href="mypopen_8c_source.html#l00182">childAction()</a>, <a class="el" href="mypopen_8c_source.html#l00028">childpid</a>, <a class="el" href="mypopen_8c_source.html#l00027">fp</a>, <a class="el" href="mypopen_8c_source.html#l00210">parentAction()</a>, <a class="el" href="mypopen_8h_source.html#l00039">READ_END</a>, and <a class="el" href="mypopen_8h_source.html#l00040">WRITE_END</a>.</p>
 
 <p><div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dynsection">
 <div class="center"><img src="mypopen_8c_ac47876a41dddae340e5afa64489dec86_cgraph.png" border="0" usemap="#mypopen_8c_ac47876a41dddae340e5afa64489dec86_cgraph_map" alt=""></div>
 <map name="mypopen_8c_ac47876a41dddae340e5afa64489dec86_cgraph_map" id="mypopen_8c_ac47876a41dddae340e5afa64489dec86_cgraph">
-<area shape="rect" id="node3" href="mypopen_8c.html#ae5fadab3316453c336cbfe6e0a3bc10f" title="childAction" alt="" coords="133,5,219,35"/><area shape="rect" id="node5" href="mypopen_8c.html#a1ee8542fc9a69bf1be706ed8c632ab69" title="parentAction" alt="" coords="129,59,223,88"/></map>
+<area shape="rect" id="node3" href="mypopen_8c.html#a974c9687b94a06aadad2daab081db4ba" title="childAction" alt="" coords="133,5,219,35"/><area shape="rect" id="node5" href="mypopen_8c.html#a1ee8542fc9a69bf1be706ed8c632ab69" title="parentAction" alt="" coords="129,59,223,88"/></map>
 </div>
 </p>
 
@@ -201,14 +223,32 @@ Here is the call graph for this function:</div>
       </table>
 </div>
 <div class="memdoc">
+<p>static FILE * parentAction(int fd[2], int unused_end, int used_end, const char *type) FUNCTION is only for the PARENT PROCESS: -this function link the used file descriptor with the parent process stin -this function also close the unused file descriptor -this function convert the used filedescriptor into a filepointer and returns the filepointer </p>
 
-<p>Definition at line <a class="el" href="mypopen_8c_source.html#l00139">139</a> of file <a class="el" href="mypopen_8c_source.html">mypopen.c</a>.</p>
+<p>Definition at line <a class="el" href="mypopen_8c_source.html#l00210">210</a> of file <a class="el" href="mypopen_8c_source.html">mypopen.c</a>.</p>
 
-<p>Referenced by <a class="el" href="mypopen_8c_source.html#l00034">mypopen()</a>.</p>
+<p>Referenced by <a class="el" href="mypopen_8c_source.html#l00033">mypopen()</a>.</p>
 
 </div>
 </div>
 <hr/><h2>Variable Documentation</h2>
+<a class="anchor" id="a8aecc963beadbaa964f33e98502b0526"></a><!-- doxytag: member="mypopen.c::childpid" ref="a8aecc963beadbaa964f33e98502b0526" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">pid_t <a class="el" href="mypopen_8c.html#a8aecc963beadbaa964f33e98502b0526">childpid</a><code> [static]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Definition at line <a class="el" href="mypopen_8c_source.html#l00028">28</a> of file <a class="el" href="mypopen_8c_source.html">mypopen.c</a>.</p>
+
+<p>Referenced by <a class="el" href="mypopen_8c_source.html#l00110">mypclose()</a>, and <a class="el" href="mypopen_8c_source.html#l00033">mypopen()</a>.</p>
+
+</div>
+</div>
 <a class="anchor" id="aa065f30aa9f5f9a42132c82c787ee70b"></a><!-- doxytag: member="mypopen.c::fp" ref="aa065f30aa9f5f9a42132c82c787ee70b" args="" -->
 <div class="memitem">
 <div class="memproto">
@@ -219,15 +259,16 @@ Here is the call graph for this function:</div>
       </table>
 </div>
 <div class="memdoc">
+<p>-------------------------------------------------------------- includes -- -------------------------------------------------------------- global static variables -- </p>
 
 <p>Definition at line <a class="el" href="mypopen_8c_source.html#l00027">27</a> of file <a class="el" href="mypopen_8c_source.html">mypopen.c</a>.</p>
 
-<p>Referenced by <a class="el" href="mypopen_8c_source.html#l00034">mypopen()</a>.</p>
+<p>Referenced by <a class="el" href="mypopen_8c_source.html#l00110">mypclose()</a>, and <a class="el" href="mypopen_8c_source.html#l00033">mypopen()</a>.</p>
 
 </div>
 </div>
 </div>
-<hr size="1"/><address style="text-align: right;"><small>Generated on 17 Apr 2016 for mypopen_mypclose by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 21 Apr 2016 for mypopen_mypclose by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>

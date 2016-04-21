@@ -22,158 +22,175 @@
     </ul>
   </div>
 <h1>mypopen.c</h1><a href="mypopen_8c.html">Go to the documentation of this file.</a><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 
-<a name="l00019"></a>00019 <span class="comment">/*</span>
-<a name="l00020"></a>00020 <span class="comment"> * -------------------------------------------------------------- includes --</span>
-<a name="l00021"></a>00021 <span class="comment"> */</span>
 <a name="l00022"></a>00022 <span class="preprocessor">#include &quot;<a class="code" href="mypopen_8h.html">mypopen.h</a>&quot;</span>
 <a name="l00023"></a>00023 
-<a name="l00024"></a>00024 <span class="comment">/*</span>
-<a name="l00025"></a>00025 <span class="comment"> * ------------------------------------------------- local static variables --</span>
-<a name="l00026"></a>00026 <span class="comment"> */</span>
 <a name="l00027"></a><a class="code" href="mypopen_8c.html#aa065f30aa9f5f9a42132c82c787ee70b">00027</a> <span class="keyword">static</span> FILE* <a class="code" href="mypopen_8c.html#aa065f30aa9f5f9a42132c82c787ee70b">fp</a> = NULL;
-<a name="l00028"></a>00028 
+<a name="l00028"></a><a class="code" href="mypopen_8c.html#a8aecc963beadbaa964f33e98502b0526">00028</a> <span class="keyword">static</span> pid_t <a class="code" href="mypopen_8c.html#a8aecc963beadbaa964f33e98502b0526">childpid</a>;
 <a name="l00029"></a>00029 
-<a name="l00030"></a>00030 <span class="comment">/*</span>
-<a name="l00031"></a>00031 <span class="comment"> * ------------------------------------------------------ mypopen -function --</span>
-<a name="l00032"></a>00032 <span class="comment"> */</span>
-<a name="l00033"></a>00033 <span class="comment">// BSP: http://stackoverflow.com/questions/9255425/writing-to-a-pipe-with-a-child-and-parent-process    </span>
-<a name="l00034"></a><a class="code" href="mypopen_8h.html#ac47876a41dddae340e5afa64489dec86">00034</a> FILE *<a class="code" href="mypopen_8c.html#ac47876a41dddae340e5afa64489dec86">mypopen</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> *command, <span class="keyword">const</span> <span class="keywordtype">char</span> *type)
-<a name="l00035"></a>00035 {
-<a name="l00036"></a>00036         <span class="keywordtype">int</span> fd[2];
-<a name="l00037"></a>00037         pid_t childpid;
-<a name="l00038"></a>00038         
-<a name="l00039"></a>00039         <span class="keywordflow">if</span> (<a class="code" href="mypopen_8c.html#aa065f30aa9f5f9a42132c82c787ee70b">fp</a> != NULL)
-<a name="l00040"></a>00040         {
-<a name="l00041"></a>00041                 errno = EAGAIN;
-<a name="l00042"></a>00042                 <span class="keywordflow">return</span> NULL;
-<a name="l00043"></a>00043         }
-<a name="l00044"></a>00044         
-<a name="l00045"></a>00045         <span class="keywordflow">if</span> ((strcmp(type, <span class="stringliteral">&quot;r&quot;</span>) != 0 &amp;&amp; strcmp(type, <span class="stringliteral">&quot;w&quot;</span>) != 0) || command == NULL)
-<a name="l00046"></a>00046         {
-<a name="l00047"></a>00047                 <span class="comment">// no valid type</span>
-<a name="l00048"></a>00048                 errno = EINVAL;
-<a name="l00049"></a>00049                 <span class="keywordflow">return</span> NULL;
-<a name="l00050"></a>00050         }
-<a name="l00051"></a>00051         
-<a name="l00052"></a>00052         <span class="comment">/* Open new pipe</span>
-<a name="l00053"></a>00053 <span class="comment">     * - return value fd[0] is for reading</span>
-<a name="l00054"></a>00054 <span class="comment">         * - return value fd[1] is for writing</span>
-<a name="l00055"></a>00055 <span class="comment">     */</span>
-<a name="l00056"></a>00056      <span class="keywordflow">if</span>(pipe(fd))
-<a name="l00057"></a>00057         {
-<a name="l00058"></a>00058                 <span class="comment">// pipe failed: according to documentation NULL should be returned</span>
-<a name="l00059"></a>00059                 <span class="keywordflow">return</span> NULL;
-<a name="l00060"></a>00060         }
-<a name="l00061"></a>00061         
-<a name="l00062"></a>00062         <span class="comment">/*</span>
-<a name="l00063"></a>00063 <span class="comment">     *if fork() is successful it return twice:</span>
-<a name="l00064"></a>00064 <span class="comment">     * - in parent process the return value is the process id (PID) of the childprocess</span>
-<a name="l00065"></a>00065 <span class="comment">     * - in child process the return value is 0</span>
-<a name="l00066"></a>00066 <span class="comment">     */</span>
-<a name="l00067"></a>00067     childpid = fork();
-<a name="l00068"></a>00068         
-<a name="l00070"></a>00070         <span class="keywordflow">if</span>(childpid == (pid_t) 0)
-<a name="l00071"></a>00071         {
-<a name="l00072"></a>00072                 <span class="comment">// read command</span>
-<a name="l00073"></a>00073                 <span class="keywordflow">if</span> (strcmp(type, <span class="stringliteral">&quot;r&quot;</span>))
-<a name="l00074"></a>00074                         <a class="code" href="mypopen_8c.html#ae5fadab3316453c336cbfe6e0a3bc10f">childAction</a>(fd, <a class="code" href="mypopen_8h.html#a2469c53816dc077f9deefb187ffcabf3">READ_END</a>, <a class="code" href="mypopen_8h.html#a2efd706d915e621e5e18b3f0803c4ed2">WRITE_END</a>, command);
-<a name="l00075"></a>00075                 <span class="comment">// write command                </span>
-<a name="l00076"></a>00076                 <span class="keywordflow">else</span> 
-<a name="l00077"></a>00077                         <a class="code" href="mypopen_8c.html#ae5fadab3316453c336cbfe6e0a3bc10f">childAction</a>(fd, <a class="code" href="mypopen_8h.html#a2efd706d915e621e5e18b3f0803c4ed2">WRITE_END</a>, <a class="code" href="mypopen_8h.html#a2469c53816dc077f9deefb187ffcabf3">READ_END</a>, command);
-<a name="l00078"></a>00078         }
-<a name="l00080"></a>00080         <span class="keywordflow">else</span> <span class="keywordflow">if</span> (childpid &gt; (pid_t) 0)
-<a name="l00081"></a>00081         {
-<a name="l00082"></a>00082                 <span class="comment">// read command</span>
-<a name="l00083"></a>00083                 <span class="keywordflow">if</span> (strcmp(type, <span class="stringliteral">&quot;r&quot;</span>))
-<a name="l00084"></a>00084                         <a class="code" href="mypopen_8c.html#aa065f30aa9f5f9a42132c82c787ee70b">fp</a> = <a class="code" href="mypopen_8c.html#a1ee8542fc9a69bf1be706ed8c632ab69">parentAction</a>(fd, <a class="code" href="mypopen_8h.html#a2efd706d915e621e5e18b3f0803c4ed2">WRITE_END</a>, <a class="code" href="mypopen_8h.html#a2469c53816dc077f9deefb187ffcabf3">READ_END</a>, type);
-<a name="l00085"></a>00085                 <span class="comment">// write command                </span>
-<a name="l00086"></a>00086                 <span class="keywordflow">else</span> 
-<a name="l00087"></a>00087                         <a class="code" href="mypopen_8c.html#aa065f30aa9f5f9a42132c82c787ee70b">fp</a> = <a class="code" href="mypopen_8c.html#a1ee8542fc9a69bf1be706ed8c632ab69">parentAction</a>(fd, <a class="code" href="mypopen_8h.html#a2469c53816dc077f9deefb187ffcabf3">READ_END</a>, <a class="code" href="mypopen_8h.html#a2efd706d915e621e5e18b3f0803c4ed2">WRITE_END</a>, type);
-<a name="l00088"></a>00088         }
-<a name="l00089"></a>00089         <span class="keywordflow">else</span> 
-<a name="l00090"></a>00090         {
-<a name="l00091"></a>00091                 <span class="comment">// fork failed: according to documentation NULL should be returned, but before close pipe:</span>
-<a name="l00092"></a>00092                 close (fd[<a class="code" href="mypopen_8h.html#a2469c53816dc077f9deefb187ffcabf3">READ_END</a>]);
-<a name="l00093"></a>00093                 close (fd[<a class="code" href="mypopen_8h.html#a2efd706d915e621e5e18b3f0803c4ed2">WRITE_END</a>]);
-<a name="l00094"></a>00094                 <span class="keywordflow">return</span> NULL;
-<a name="l00095"></a>00095         }
-<a name="l00096"></a>00096         
-<a name="l00097"></a>00097         <span class="keywordflow">return</span> <a class="code" href="mypopen_8c.html#aa065f30aa9f5f9a42132c82c787ee70b">fp</a>;
-<a name="l00098"></a>00098 }
-<a name="l00099"></a>00099 
-<a name="l00100"></a>00100 
-<a name="l00101"></a>00101 
-<a name="l00102"></a>00102 
-<a name="l00103"></a>00103 <span class="comment">/*</span>
-<a name="l00104"></a>00104 <span class="comment"> * ------------------------------------------------------ mypclose -function --</span>
-<a name="l00105"></a>00105 <span class="comment"> */</span>
-<a name="l00106"></a><a class="code" href="mypopen_8h.html#ae75ec57d5d9b3ad79c5f5e48e5dcfd0d">00106</a> <span class="keywordtype">int</span> <a class="code" href="mypopen_8c.html#ae75ec57d5d9b3ad79c5f5e48e5dcfd0d">mypclose</a>(FILE *stream)
-<a name="l00107"></a>00107 {
-<a name="l00108"></a>00108         <span class="keywordflow">return</span> pclose(stream);
-<a name="l00109"></a>00109 }
-<a name="l00110"></a>00110 
-<a name="l00111"></a>00111 
-<a name="l00112"></a>00112 
-<a name="l00113"></a>00113 
-<a name="l00114"></a>00114 
-<a name="l00115"></a>00115 
-<a name="l00116"></a>00116 
-<a name="l00117"></a>00117 <span class="comment">/*</span>
-<a name="l00118"></a>00118 <span class="comment"> * ------------------------------------------------------- help - functions --</span>
-<a name="l00119"></a>00119 <span class="comment"> */</span>
-<a name="l00120"></a><a class="code" href="mypopen_8c.html#ae5fadab3316453c336cbfe6e0a3bc10f">00120</a> <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code" href="mypopen_8c.html#ae5fadab3316453c336cbfe6e0a3bc10f">childAction</a>(<span class="keywordtype">int</span> fd[2], <span class="keywordtype">int</span> unused_end, <span class="keywordtype">int</span> used_end, <span class="keyword">const</span> <span class="keywordtype">char</span> *command)
-<a name="l00121"></a>00121 {
-<a name="l00122"></a>00122         <span class="comment">// close unused pipe end</span>
-<a name="l00123"></a>00123         close (fd[unused_end]);
-<a name="l00124"></a>00124         
-<a name="l00125"></a>00125         <span class="comment">// Link STDOUT with pipe fd</span>
-<a name="l00126"></a>00126         <span class="keywordflow">if</span> (dup2(fd[used_end], STDOUT_FILENO) == -1) {
-<a name="l00127"></a>00127                 <span class="comment">// dup2 failed: close pipe and end child process (NO RETURN, because then child and parent would send return value to main) </span>
-<a name="l00128"></a>00128                 close (fd[used_end]);
-<a name="l00129"></a>00129                 _exit(EXIT_FAILURE);
-<a name="l00130"></a>00130         }
-<a name="l00131"></a>00131         
-<a name="l00132"></a>00132         <span class="comment">// Execute the command in a shell:</span>
-<a name="l00133"></a>00133         execl(<span class="stringliteral">&quot;/bin/sh&quot;</span>, <span class="stringliteral">&quot;sh&quot;</span>, <span class="stringliteral">&quot;-c&quot;</span>, command, NULL);
-<a name="l00134"></a>00134         
-<a name="l00135"></a>00135         <span class="comment">// This code only get executed if execl fails. This code is used to &quot;kill&quot; the child process:</span>
-<a name="l00136"></a>00136         _exit(EXIT_FAILURE);
-<a name="l00137"></a>00137 }
-<a name="l00138"></a>00138 
-<a name="l00139"></a><a class="code" href="mypopen_8c.html#a1ee8542fc9a69bf1be706ed8c632ab69">00139</a> <span class="keyword">static</span> FILE * <a class="code" href="mypopen_8c.html#a1ee8542fc9a69bf1be706ed8c632ab69">parentAction</a>(<span class="keywordtype">int</span> fd[2], <span class="keywordtype">int</span> unused_end, <span class="keywordtype">int</span> used_end, <span class="keyword">const</span> <span class="keywordtype">char</span> *type)
-<a name="l00140"></a>00140 {
-<a name="l00141"></a>00141         FILE* fp_temp = NULL; 
-<a name="l00142"></a>00142         
-<a name="l00143"></a>00143         <span class="comment">// close unused pipe end</span>
-<a name="l00144"></a>00144         close (fd[unused_end]);
-<a name="l00145"></a>00145         
-<a name="l00146"></a>00146         <span class="comment">// Link STDIN with pipe fd</span>
-<a name="l00147"></a>00147         <span class="keywordflow">if</span> (dup2(fd[used_end], STDIN_FILENO) == -1) {
-<a name="l00148"></a>00148                 <span class="comment">// dup2 failed </span>
-<a name="l00149"></a>00149                 close (fd[used_end]);
-<a name="l00150"></a>00150                 <span class="keywordflow">return</span> NULL;
-<a name="l00151"></a>00151         }
-<a name="l00152"></a>00152         
-<a name="l00153"></a>00153         <span class="comment">// Convert file descriptor into file pointer</span>
-<a name="l00154"></a>00154         <span class="keywordflow">if</span> ((fp_temp = fdopen(fd[used_end], type)) == NULL) 
-<a name="l00155"></a>00155         {
-<a name="l00156"></a>00156                 <span class="comment">// fdopen failed: close pipe and return null</span>
-<a name="l00157"></a>00157                 close(fd[used_end]);
-<a name="l00158"></a>00158                 <span class="keywordflow">return</span> NULL;
-<a name="l00159"></a>00159         }
-<a name="l00160"></a>00160         
-<a name="l00161"></a>00161         <span class="keywordflow">return</span> fp_temp;
-<a name="l00162"></a>00162 }
-<a name="l00163"></a>00163 
-<a name="l00164"></a>00164 <span class="comment">// WENN FEHLER DANN VORHER AUFRÄUMEN: pipe schließen etc</span>
-<a name="l00165"></a>00165 <span class="comment">// execl(&quot;/bin/sh&quot;, &quot;sh&quot;, &quot;-c&quot;, command, NULL);</span>
-<a name="l00166"></a>00166 
-<a name="l00167"></a>00167 <span class="comment">// mypclose():</span>
-<a name="l00168"></a>00168 <span class="comment">// waitpid(); </span>
-<a name="l00169"></a>00169 <span class="comment">// Pipe wird geschlossen wenn letzter filedeskriptor geschlossen wird</span>
-<a name="l00170"></a>00170 <span class="comment">// fclose von Filepointer (fclose schließt den darunter liegeneden filedeskriptor fd)</span>
+<a name="l00033"></a><a class="code" href="mypopen_8h.html#ac47876a41dddae340e5afa64489dec86">00033</a> FILE *<a class="code" href="mypopen_8c.html#ac47876a41dddae340e5afa64489dec86">mypopen</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> *command, <span class="keyword">const</span> <span class="keywordtype">char</span> *type)
+<a name="l00034"></a>00034 {
+<a name="l00035"></a>00035     <span class="comment">/*variable for file descriptor*/</span>
+<a name="l00036"></a>00036     <span class="keywordtype">int</span> fd[2];
+<a name="l00037"></a>00037     
+<a name="l00038"></a>00038     <span class="comment">/*check if filepointer is already open -&gt; if so, then thats not OK -&gt; only one instance is allowed*/</span>
+<a name="l00039"></a>00039     <span class="keywordflow">if</span> (<a class="code" href="mypopen_8c.html#aa065f30aa9f5f9a42132c82c787ee70b">fp</a> != NULL)
+<a name="l00040"></a>00040     {
+<a name="l00041"></a>00041         errno = EAGAIN;
+<a name="l00042"></a>00042         <span class="keywordflow">return</span> NULL;
+<a name="l00043"></a>00043     }
+<a name="l00044"></a>00044     
+<a name="l00045"></a>00045     <span class="comment">/*check if correct type is given*/</span>
+<a name="l00046"></a>00046     <span class="keywordflow">if</span> ((strcmp(type, <span class="stringliteral">&quot;r&quot;</span>) != 0 &amp;&amp; strcmp(type, <span class="stringliteral">&quot;w&quot;</span>) != 0) || command == NULL)
+<a name="l00047"></a>00047     {
+<a name="l00048"></a>00048         <span class="comment">/*no valid type*/</span>
+<a name="l00049"></a>00049         errno = EINVAL;
+<a name="l00050"></a>00050         <span class="keywordflow">return</span> NULL;
+<a name="l00051"></a>00051     }
+<a name="l00052"></a>00052     
+<a name="l00058"></a>00058     <span class="keywordflow">if</span>(pipe(fd) == -1)
+<a name="l00059"></a>00059     {
+<a name="l00060"></a>00060         <span class="comment">/*pipe failed: according to documentation NULL should be returned*/</span>
+<a name="l00061"></a>00061         <span class="keywordflow">return</span> NULL;
+<a name="l00062"></a>00062     }
+<a name="l00063"></a>00063     
+<a name="l00069"></a>00069     <a class="code" href="mypopen_8c.html#a8aecc963beadbaa964f33e98502b0526">childpid</a> = fork();
+<a name="l00070"></a>00070     
+<a name="l00072"></a>00072     <span class="keywordflow">if</span>(<a class="code" href="mypopen_8c.html#a8aecc963beadbaa964f33e98502b0526">childpid</a> == (pid_t) 0)
+<a name="l00073"></a>00073     {
+<a name="l00074"></a>00074         <span class="comment">// read command</span>
+<a name="l00075"></a>00075         <span class="keywordflow">if</span> (strcmp(type, <span class="stringliteral">&quot;r&quot;</span>) == 0)
+<a name="l00076"></a>00076             <a class="code" href="mypopen_8c.html#a974c9687b94a06aadad2daab081db4ba">childAction</a>(fd, <a class="code" href="mypopen_8h.html#a2469c53816dc077f9deefb187ffcabf3">READ_END</a>, <a class="code" href="mypopen_8h.html#a2efd706d915e621e5e18b3f0803c4ed2">WRITE_END</a>, command, STDOUT_FILENO);
+<a name="l00077"></a>00077         <span class="comment">// write command</span>
+<a name="l00078"></a>00078         <span class="keywordflow">else</span>
+<a name="l00079"></a>00079             <a class="code" href="mypopen_8c.html#a974c9687b94a06aadad2daab081db4ba">childAction</a>(fd, <a class="code" href="mypopen_8h.html#a2efd706d915e621e5e18b3f0803c4ed2">WRITE_END</a>, <a class="code" href="mypopen_8h.html#a2469c53816dc077f9deefb187ffcabf3">READ_END</a>, command, STDIN_FILENO);
+<a name="l00080"></a>00080     }
+<a name="l00082"></a>00082     <span class="keywordflow">else</span> <span class="keywordflow">if</span> (<a class="code" href="mypopen_8c.html#a8aecc963beadbaa964f33e98502b0526">childpid</a> &gt; (pid_t) 0)
+<a name="l00083"></a>00083     {
+<a name="l00084"></a>00084         <span class="comment">// read command</span>
+<a name="l00085"></a>00085         <span class="keywordflow">if</span> (strcmp(type, <span class="stringliteral">&quot;r&quot;</span>) == 0)
+<a name="l00086"></a>00086             <a class="code" href="mypopen_8c.html#aa065f30aa9f5f9a42132c82c787ee70b">fp</a> = <a class="code" href="mypopen_8c.html#a1ee8542fc9a69bf1be706ed8c632ab69">parentAction</a>(fd, <a class="code" href="mypopen_8h.html#a2efd706d915e621e5e18b3f0803c4ed2">WRITE_END</a>, <a class="code" href="mypopen_8h.html#a2469c53816dc077f9deefb187ffcabf3">READ_END</a>, type);
+<a name="l00087"></a>00087         <span class="comment">// write command</span>
+<a name="l00088"></a>00088         <span class="keywordflow">else</span>
+<a name="l00089"></a>00089             <a class="code" href="mypopen_8c.html#aa065f30aa9f5f9a42132c82c787ee70b">fp</a> = <a class="code" href="mypopen_8c.html#a1ee8542fc9a69bf1be706ed8c632ab69">parentAction</a>(fd, <a class="code" href="mypopen_8h.html#a2469c53816dc077f9deefb187ffcabf3">READ_END</a>, <a class="code" href="mypopen_8h.html#a2efd706d915e621e5e18b3f0803c4ed2">WRITE_END</a>, type);
+<a name="l00090"></a>00090         
+<a name="l00091"></a>00091         
+<a name="l00092"></a>00092     }
+<a name="l00093"></a>00093     <span class="keywordflow">else</span>
+<a name="l00094"></a>00094     {
+<a name="l00095"></a>00095         <span class="comment">/* fork failed: according to documentation NULL should be returned, but before close pipe:*/</span>
+<a name="l00096"></a>00096         close (fd[<a class="code" href="mypopen_8h.html#a2469c53816dc077f9deefb187ffcabf3">READ_END</a>]);
+<a name="l00097"></a>00097         close (fd[<a class="code" href="mypopen_8h.html#a2efd706d915e621e5e18b3f0803c4ed2">WRITE_END</a>]);
+<a name="l00098"></a>00098         <span class="keywordflow">return</span> NULL;
+<a name="l00099"></a>00099     }
+<a name="l00100"></a>00100     
+<a name="l00101"></a>00101     <span class="keywordflow">return</span> <a class="code" href="mypopen_8c.html#aa065f30aa9f5f9a42132c82c787ee70b">fp</a>;
+<a name="l00102"></a>00102 }
+<a name="l00103"></a>00103 
+<a name="l00104"></a>00104 
+<a name="l00105"></a>00105 
+<a name="l00106"></a>00106 
+<a name="l00110"></a><a class="code" href="mypopen_8h.html#ae75ec57d5d9b3ad79c5f5e48e5dcfd0d">00110</a> <span class="keywordtype">int</span> <a class="code" href="mypopen_8c.html#ae75ec57d5d9b3ad79c5f5e48e5dcfd0d">mypclose</a>(FILE *stream)
+<a name="l00111"></a>00111 {
+<a name="l00112"></a>00112     pid_t pid_wait;
+<a name="l00113"></a>00113     <span class="keywordtype">int</span> state;
+<a name="l00114"></a>00114     
+<a name="l00115"></a>00115     <span class="comment">/*check if filepointer is already open -&gt; if NOT, then thats not OK -&gt; popen should be run first!*/</span>
+<a name="l00116"></a>00116     <span class="keywordflow">if</span> (<a class="code" href="mypopen_8c.html#aa065f30aa9f5f9a42132c82c787ee70b">fp</a> == NULL)
+<a name="l00117"></a>00117     {
+<a name="l00118"></a>00118         errno = ECHILD;
+<a name="l00119"></a>00119         <span class="keywordflow">return</span> -1;
+<a name="l00120"></a>00120     }
+<a name="l00121"></a>00121     
+<a name="l00122"></a>00122     
+<a name="l00123"></a>00123     <span class="comment">/* check if stream is the correct stream to close */</span>
+<a name="l00124"></a>00124     <span class="keywordflow">if</span> (<a class="code" href="mypopen_8c.html#aa065f30aa9f5f9a42132c82c787ee70b">fp</a> != stream) {
+<a name="l00125"></a>00125         errno = EINVAL;
+<a name="l00126"></a>00126         <span class="keywordflow">return</span> -1;
+<a name="l00127"></a>00127     }
+<a name="l00128"></a>00128     
+<a name="l00129"></a>00129     <span class="comment">/*if fclose returns an EOF, then there was already a stream passing-&gt; Error -1*/</span>
+<a name="l00130"></a>00130     <span class="keywordflow">if</span> (fclose(stream) == EOF) {
+<a name="l00131"></a>00131         <a class="code" href="mypopen_8c.html#aa065f30aa9f5f9a42132c82c787ee70b">fp</a> = NULL;
+<a name="l00132"></a>00132         <a class="code" href="mypopen_8c.html#a8aecc963beadbaa964f33e98502b0526">childpid</a> = -1;
+<a name="l00133"></a>00133         errno = ECHILD;
+<a name="l00134"></a>00134         <span class="keywordflow">return</span> -1;
+<a name="l00135"></a>00135     }
+<a name="l00136"></a>00136     
+<a name="l00137"></a>00137     <span class="comment">//reset errno to zero</span>
+<a name="l00138"></a>00138     errno = 0;
+<a name="l00139"></a>00139     
+<a name="l00140"></a>00140     <span class="comment">/* wait for a child process to terminate */</span>
+<a name="l00141"></a>00141     
+<a name="l00142"></a>00142     <span class="keywordflow">while</span> ((pid_wait = waitpid(<a class="code" href="mypopen_8c.html#a8aecc963beadbaa964f33e98502b0526">childpid</a>, &amp;state, 0)) != <a class="code" href="mypopen_8c.html#a8aecc963beadbaa964f33e98502b0526">childpid</a>) {
+<a name="l00143"></a>00143         <span class="keywordflow">if</span> (pid_wait == -1) {
+<a name="l00144"></a>00144             <span class="keywordflow">if</span> (errno == EINTR) {
+<a name="l00145"></a>00145                 <span class="keywordflow">continue</span>;
+<a name="l00146"></a>00146             }
+<a name="l00147"></a>00147         }
+<a name="l00148"></a>00148         
+<a name="l00149"></a>00149         <span class="comment">/*When waidpid returns unexpected value*/</span>
+<a name="l00150"></a>00150         <a class="code" href="mypopen_8c.html#aa065f30aa9f5f9a42132c82c787ee70b">fp</a> = NULL;
+<a name="l00151"></a>00151         <a class="code" href="mypopen_8c.html#a8aecc963beadbaa964f33e98502b0526">childpid</a>= -1;
+<a name="l00152"></a>00152         errno = ECHILD;
+<a name="l00153"></a>00153         <span class="keywordflow">return</span> -1;
+<a name="l00154"></a>00154     }
+<a name="l00155"></a>00155     
+<a name="l00156"></a>00156     
+<a name="l00157"></a>00157     <span class="comment">/*Now filepointer can set to NULL */</span>
+<a name="l00158"></a>00158     <a class="code" href="mypopen_8c.html#aa065f30aa9f5f9a42132c82c787ee70b">fp</a> = NULL;
+<a name="l00159"></a>00159     <a class="code" href="mypopen_8c.html#a8aecc963beadbaa964f33e98502b0526">childpid</a>=-1;
+<a name="l00160"></a>00160     
+<a name="l00161"></a>00161     <span class="comment">/*only when state != 0 everything is OK */</span>
+<a name="l00162"></a>00162     <span class="keywordflow">if</span> (WIFEXITED(state) != 0) {
+<a name="l00163"></a>00163         <span class="keywordflow">return</span> WEXITSTATUS(state);
+<a name="l00164"></a>00164     }
+<a name="l00165"></a>00165     
+<a name="l00166"></a>00166     errno = ECHILD;
+<a name="l00167"></a>00167     <span class="keywordflow">return</span> -1;
+<a name="l00168"></a>00168     
+<a name="l00169"></a>00169 }
+<a name="l00170"></a>00170 
+<a name="l00182"></a><a class="code" href="mypopen_8c.html#a974c9687b94a06aadad2daab081db4ba">00182</a> <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code" href="mypopen_8c.html#a974c9687b94a06aadad2daab081db4ba">childAction</a>(<span class="keywordtype">int</span> fd[2], <span class="keywordtype">int</span> unused_end, <span class="keywordtype">int</span> used_end, <span class="keyword">const</span> <span class="keywordtype">char</span> *command, <span class="keywordtype">int</span> fileno)
+<a name="l00183"></a>00183 {
+<a name="l00184"></a>00184     <span class="comment">/*close unused pipe end*/</span>
+<a name="l00185"></a>00185     close (fd[unused_end]);
+<a name="l00186"></a>00186     
+<a name="l00187"></a>00187     <span class="comment">/* Link STDOUT with pipe fd*/</span>
+<a name="l00188"></a>00188     <span class="keywordflow">if</span> (dup2(fd[used_end], fileno) == -1) {
+<a name="l00189"></a>00189         <span class="comment">/* dup2 failed: close pipe and end child process (NO RETURN, because then child and parent would send return value to main)*/</span>
+<a name="l00190"></a>00190         close (fd[used_end]);
+<a name="l00191"></a>00191         exit(EXIT_FAILURE);
+<a name="l00192"></a>00192     }
+<a name="l00193"></a>00193     close(fd[used_end]);
+<a name="l00194"></a>00194     
+<a name="l00195"></a>00195     <span class="comment">/*Execute the command in a shell:*/</span>
+<a name="l00196"></a>00196     execl(<span class="stringliteral">&quot;/bin/sh&quot;</span>, <span class="stringliteral">&quot;sh&quot;</span>, <span class="stringliteral">&quot;-c&quot;</span>, command, NULL);
+<a name="l00197"></a>00197     
+<a name="l00198"></a>00198     <span class="comment">/*This code only get executed if execl fails. This code is used to &quot;kill&quot; the child process:*/</span>
+<a name="l00199"></a>00199     exit(EXIT_FAILURE);
+<a name="l00200"></a>00200 }
+<a name="l00201"></a>00201 
+<a name="l00202"></a>00202 
+<a name="l00210"></a><a class="code" href="mypopen_8c.html#a1ee8542fc9a69bf1be706ed8c632ab69">00210</a> <span class="keyword">static</span> FILE * <a class="code" href="mypopen_8c.html#a1ee8542fc9a69bf1be706ed8c632ab69">parentAction</a>(<span class="keywordtype">int</span> fd[2], <span class="keywordtype">int</span> unused_end, <span class="keywordtype">int</span> used_end, <span class="keyword">const</span> <span class="keywordtype">char</span> *type)
+<a name="l00211"></a>00211 {
+<a name="l00212"></a>00212     FILE* fp_temp = NULL;
+<a name="l00213"></a>00213     
+<a name="l00214"></a>00214     <span class="comment">/*close unused pipe end*/</span>
+<a name="l00215"></a>00215     close (fd[unused_end]);
+<a name="l00216"></a>00216     
+<a name="l00217"></a>00217     <span class="comment">/*Convert file descriptor into file pointer*/</span>
+<a name="l00218"></a>00218     <span class="keywordflow">if</span> ((fp_temp = fdopen(fd[used_end], type)) == NULL)
+<a name="l00219"></a>00219     {
+<a name="l00220"></a>00220         <span class="comment">/*fdopen failed: close pipe and return null*/</span>
+<a name="l00221"></a>00221         close(fd[used_end]);
+<a name="l00222"></a>00222         <span class="keywordflow">return</span> NULL;
+<a name="l00223"></a>00223     }
+<a name="l00224"></a>00224     
+<a name="l00225"></a>00225     <span class="keywordflow">return</span> fp_temp;
+<a name="l00226"></a>00226 }
+<a name="l00227"></a>00227 
 </pre></div></div>
-<hr size="1"/><address style="text-align: right;"><small>Generated on 17 Apr 2016 for mypopen_mypclose by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 21 Apr 2016 for mypopen_mypclose by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>
