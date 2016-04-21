@@ -34,15 +34,15 @@ DOXYGEN=doxygen
 ##
 
 .PHONY: all
-all: mypopen
+all: mypopen.o
 
 mypopen: $(OBJECTS)
-	$(CC) $(CFLAGS) -lpopentest -o $@ $^
+	$(CC) $(CFLAGS) -c $@ $^
 ##	$(RM) *.o
  
 .PHONY: clean
 clean:
-	$(RM) *.o  mypopen
+	$(RM) *.o
 
 
 .PHONY: distclean
