@@ -41,12 +41,12 @@ mypopen: $(OBJECTS)
 ##	$(RM) *.o
  
 .PHONY: clean
-clean:
+clean: mypopen.o
 	$(RM) *.o
 
 
 .PHONY: distclean
-distclean: clean
+distclean:
 	$(RM) -rf doc
 
 doc: html pdf
