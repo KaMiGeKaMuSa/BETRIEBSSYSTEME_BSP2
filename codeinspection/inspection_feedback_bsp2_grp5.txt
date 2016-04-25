@@ -1,0 +1,15 @@
+Code Inspection:
+
+Positiv: 
+	+ alle Tests, die von Professoren zur Verfügung gestellt wurden, bestanden
+	+ gut strukturierter Code
+	+ lesbar und sehr verständlich
+	+ Kommentare sind kurz, bündig und hilfreich
+	+ gute Fehlerbehandlung
+	
+Negativ:
+	- Header gehört in .c File inkludiert. 
+	- Command-Parameter in mypopen wird nicht auf NULL überprüft
+	- int fd[2]; gehört am Anfang der Funktion
+	- Fast identer Code sollte vermieden werden (z.B. mit Hilfsfunktion)
+	- if-else anstelle von mehreren einzelnen ifs verwenden
