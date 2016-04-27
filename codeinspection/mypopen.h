@@ -13,11 +13,12 @@
  */
 
 #pragma once
-/*
-* ### FB: Good practice um sicherzustellen, dass Header nicht öfters definiert wird:
-*         #ifndef _MYPOPEN_H_
-*         ......
-*         #endif 
+/* ### FB: 1) Good practice um sicherzustellen, dass Header nicht öfters definiert wird:
+*           #ifndef _MYPOPEN_H_
+*           ......
+*           #endif 
+*         2) includes gehören in Headerfile nicht in .c File
+*         3) Warum sind Funktionsprototypen als extern deklariert? Header gehört in .c File inkludiert dann muss es nicht über Makefile gelinkt werden
 */
 /*
  * ------------------------------------------------------------- functions --
