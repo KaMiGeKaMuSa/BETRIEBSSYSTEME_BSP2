@@ -13,7 +13,12 @@
  */
 
 #pragma once
-
+/*
+* ### FB: Good practice um sicherzustellen, dass Header nicht öfters definiert wird:
+*         #ifndef _MYPOPEN_H_
+*         ......
+*         #endif 
+*/
 /*
  * ------------------------------------------------------------- functions --
  */
